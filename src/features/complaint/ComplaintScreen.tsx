@@ -61,7 +61,7 @@ export function ComplaintScreen() {
   const submit = async () => {
     const resolvedCategory: CategoryId | null = category ?? (statement.trim() ? "free" : null);
     if (!resolvedCategory) {
-      setProblem("아무 얘기나 적거나, 아래에서 하나만 골라 주세요. 나머지는 대충 넘겨도 됩니다.");
+      setProblem("진술을 적거나 민원 유형을 하나만 골라 주십시오. 나머지는 대충 넘겨도 됩니다.");
       return;
     }
     if (looksLikeSeriousDistress(statement)) {
@@ -106,34 +106,34 @@ export function ComplaintScreen() {
       <h1 className="text-[28px]">민원 접수실</h1>
 
       <div>
-        <label htmlFor="statement" className="font-display text-lg">{today ? STATEMENT_PROMPTS[dailyIndex(today, "prompt", STATEMENT_PROMPTS.length)] : "오늘 무슨 일 있었어요?"}</label>
+        <label htmlFor="statement" className="font-display text-lg">{today ? STATEMENT_PROMPTS[dailyIndex(today, "prompt", STATEMENT_PROMPTS.length)] : "오늘 무슨 일 있으셨습니까?"}</label>
         <textarea
           id="statement"
           className="paper mt-2 block min-h-32 w-full p-3 text-base"
           maxLength={200}
           value={statement}
-          placeholder="뭐든 적어 주세요. 길어도, 짧아도, 황당한 일이 아니어도 됩니다."
+          placeholder="진술란입니다. 길어도, 짧아도, 황당한 일이 아니어도 접수합니다."
           onChange={(event) => { setStatement(event.target.value); setProblem(null); }}
         />
-        <p className="mt-1 text-right text-sm text-ink-soft">{statement.length} / 200자. 실명과 연락처는 빼 주세요.</p>
+        <p className="mt-1 text-right text-sm text-ink-soft">{statement.length} / 200자. 실명과 연락처는 받지 않습니다.</p>
       </div>
 
-      <p className="font-display text-ink-soft">쓰기 귀찮으면 아래에서 골라도 됩니다. 전부 건너뛰어도 되고요.</p>
-      <ChipGroup legend="어떤 쪽에 가깝나요?" options={CATEGORIES.filter((item) => item.id !== "free").map((item) => ({ value: item.id, label: item.label }))} value={category} onChange={(value) => { setCategory(value as CategoryId | null); setProblem(null); }} columns allowClear />
-      <ChipGroup legend="오늘의 에너지 잔량은?" options={ENERGY_LEVELS.map((item) => ({ value: String(item.value), label: item.label }))} value={String(energy)} onChange={(value) => setEnergy(Number(value))} />
-      <ChipGroup legend="오늘 가장 쓸데없었던 행동은? (건너뛰어도 됨)" options={USELESS_ACTS.map((item) => ({ value: item, label: item }))} value={uselessAct} onChange={setUselessAct} allowClear />
-      <ChipGroup legend="오늘의 사회생활 상태는? (건너뛰어도 됨)" options={SOCIAL_STATES.map((item) => ({ value: item, label: item }))} value={socialState} onChange={setSocialState} allowClear />
+      <p className="font-display text-ink-soft">적기 귀찮으시면 아래 칸에 표시만 하십시오. 안 하셔도 공단은 모릅니다.</p>
+      <ChipGroup legend="민원 유형 (담당자도 잘 모릅니다)" options={CATEGORIES.filter((item) => item.id !== "free").map((item) => ({ value: item.id, label: item.label }))} value={category} onChange={(value) => { setCategory(value as CategoryId | null); setProblem(null); }} columns allowClear />
+      <ChipGroup legend="잔여 에너지 신고" options={ENERGY_LEVELS.map((item) => ({ value: String(item.value), label: item.label }))} value={String(energy)} onChange={(value) => setEnergy(Number(value))} />
+      <ChipGroup legend="금일 비생산 활동 내역 (선택)" options={USELESS_ACTS.map((item) => ({ value: item, label: item }))} value={uselessAct} onChange={setUselessAct} allowClear />
+      <ChipGroup legend="사회생활 창구 운영 현황 (선택)" options={SOCIAL_STATES.map((item) => ({ value: item, label: item }))} value={socialState} onChange={setSocialState} allowClear />
 
       <fieldset className="m-0 border-0 p-0">
-        <legend className="p-0 font-display text-lg">사건을 공개할까요?</legend>
+        <legend className="p-0 font-display text-lg">이 서류는 어디에 둘까요?</legend>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
           <label className={`paper flex cursor-pointer gap-2 p-3 ${visibility === "private" ? "bg-mustard" : ""}`}>
             <input type="radio" name="visibility" checked={visibility === "private"} onChange={() => setVisibility("private")} />
-            <span><span className="block font-display">나만 보기</span><span className="text-sm">공단과 귀하만 압니다. 공단은 금방 잊습니다.</span></span>
+            <span><span className="block font-display">나만 보기: 공단 서랍에 보관</span><span className="text-sm">다른 시민에게 보이지 않습니다. 공단은 금방 잊습니다.</span></span>
           </label>
           <label className={`paper flex cursor-pointer gap-2 p-3 ${visibility === "public" ? "bg-mustard" : ""}`}>
             <input type="radio" name="visibility" checked={visibility === "public"} onChange={() => setVisibility("public")} />
-            <span><span className="block font-display">익명 공개</span><span className="text-sm">사건기록실에 닉네임과 캐릭터로 표시되고, 적은 내용도 함께 보입니다. 나중에 내 기록에서 비공개로 바꿀 수 있어요.</span></span>
+            <span><span className="block font-display">익명 공개: 사건기록실 게시판에 부착</span><span className="text-sm">사건기록실에 닉네임과 캐릭터로 표시되고, 적은 내용도 함께 보입니다. 나중에 내 기록에서 비공개로 바꿀 수 있어요.</span></span>
           </label>
         </div>
       </fieldset>
