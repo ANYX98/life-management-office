@@ -66,6 +66,8 @@ revoke all on public.citizens from anon, authenticated;
 grant select on public.citizens to anon, authenticated;
 grant insert (id, nickname, character) on public.citizens to authenticated;
 grant update (nickname, character) on public.citizens to authenticated;
+-- 시민 등록 때 기본값 계산에 쓰인다. 자동 권한 부여를 꺼도 동작하도록 명시한다.
+grant execute on function public.random_citizen_type() to authenticated;
 
 -- 광장 통계: 실제 집계만 돌려준다. 하루 기준은 한국 시간.
 create or replace function public.plaza_stats()
