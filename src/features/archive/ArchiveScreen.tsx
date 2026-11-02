@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Character } from "@/components/character/Character";
 import { ErrorNote, LoadingNote } from "@/components/ui/StateNotes";
+import { CaseBody } from "@/features/complaint/CaseBody";
 import { REACTIONS, REPORT_REASONS, type ArchiveSort, type ReactionKind, type ReportReason } from "@/lib/archive/reactions";
 import { citizenRepository } from "@/lib/citizen/repository";
 import type { PublicCase } from "@/lib/citizen/types";
@@ -169,11 +170,7 @@ function PublicCaseCard({ item, canAct, onHide }: { item: PublicCase; canAct: bo
         </span>
       </header>
       <h2 className="mt-3 text-[23px]">{item.title}</h2>
-      <p className="mt-2">{item.report}</p>
-      <h3 className="mt-3 text-base">공단 판정</h3>
-      <p>{item.verdict}</p>
-      <h3 className="mt-3 text-base">행정 처분</h3>
-      <p>{item.disposition}</p>
+      <CaseBody report={item.report} verdict={item.verdict} disposition={item.disposition} />
       {item.awardedTitle && <p className="mt-2">획득 칭호: <span className="font-display text-brick">{item.awardedTitle}</span></p>}
 
       <div className="mt-4 flex flex-wrap gap-2">
