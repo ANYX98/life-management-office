@@ -101,6 +101,7 @@ function CitizenSlip({ citizen }: { citizen: Citizen }) {
       <div className="mt-1 flex flex-wrap justify-center gap-3">
         <Link href="/complaint" className="btn btn-primary">민원 접수</Link>
         <Link href="/records" className="btn">내 기록</Link>
+        <Link href="/weekly" className="btn">주간 보고서</Link>
         <Link href="/card" className="btn">시민증</Link>
         <Link href="/studio" className="btn">캐릭터 꾸미기</Link>
       </div>
@@ -215,7 +216,7 @@ function FacilityMap() {
   return (
     <section>
       <h2 className="text-2xl">공단 청사 안내도</h2>
-      <p className="mb-3">지금 이용할 수 있는 곳은 광장, 시민 등록실, 시민증, 증명사진 촬영실, 민원 접수실, 나의 인생 기록실, 민원 3번 창구, 시민 사건기록실입니다.</p>
+      <p className="mb-3">지금 이용할 수 있는 곳은 광장, 시민 등록실, 시민증, 증명사진 촬영실, 민원 접수실, 나의 인생 기록실, 민원 3번 창구, 시민 사건기록실, 주간 인생 보고서입니다.</p>
       <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {FACILITIES.map((facility) => (
           <li key={facility.name} className="flex items-center justify-between gap-3 border-b-2 border-dashed border-ink/30 py-2">

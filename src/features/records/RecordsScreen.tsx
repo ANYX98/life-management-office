@@ -69,6 +69,8 @@ export function RecordsScreen() {
     <div className="mx-auto grid max-w-2xl gap-6 pt-2">
       <h1 className="text-[28px]">{state.citizen.nickname} 시민의 인생 기록실</h1>
 
+      <Link href="/weekly" className="btn justify-self-start">주간 인생 보고서 보기</Link>
+
       <section>
         <h2 className="text-xl">획득한 칭호 {titles.length}개</h2>
         {titles.length === 0 ? (
@@ -129,7 +131,7 @@ export function RecordsScreen() {
         ))}
       </section>
 
-      <p className="text-center text-sm text-ink-soft">스티커와 주간 인생 보고서는 아직 공사 중입니다.</p>
+      <p className="text-center text-sm text-ink-soft">스티커는 아직 공사 중입니다.</p>
     </div>
   );
 }

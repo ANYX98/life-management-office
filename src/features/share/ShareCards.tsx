@@ -5,6 +5,8 @@ import { splitDisposition, splitReport } from "@/features/complaint/CaseBody";
 import type { CharacterConfig } from "@/lib/character/catalog";
 import type { Citizen } from "@/lib/citizen/types";
 import { SITE_HOST } from "@/lib/share/image";
+import type { WeeklyReport } from "@/lib/weekly/report";
+import { WeekStamps } from "@/features/weekly/WeeklyParts";
 
 const WIDTH = 540;
 const HEIGHT = 960;
@@ -51,6 +53,36 @@ export function CitizenShareCard({ citizen }: { citizen: Citizen }) {
           <Row label="누적 사건" value={`${citizen.caseCount}건`} />
           <div className="stamp-round" style={{ position: "absolute", right: 20, top: 232, width: 100, height: 100, fontSize: 17 }}>인생<br />관리공단</div>
         </div>
+      </div>
+    </Frame>
+  );
+}
+
+export function WeeklyShareCard({ report, citizen }: { report: WeeklyReport; citizen: Citizen }) {
+  return (
+    <Frame background="#A9B99B">
+      <div style={{ background: "#FFFBF2", border: "4px solid #34312E", borderRadius: 22, padding: 24, display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 16 }}>
+        <div>
+          <p style={{ margin: 0, fontSize: 18, color: "#625C54" }}>{report.rangeLabel} / {citizen.nickname} 시민</p>
+          <h2 className="font-display" style={{ fontSize: 38, margin: "2px 0 0" }}>주간 인생 보고서</h2>
+        </div>
+        <WeekStamps report={report} large />
+        <div>
+          <p style={{ margin: 0, fontSize: 18, color: "#625C54" }}>공단 판정</p>
+          <p className="font-display" style={{ margin: 0, fontSize: 25, lineHeight: 1.3 }}>{report.verdict}</p>
+        </div>
+        <div>
+          <p style={{ margin: 0, fontSize: 18, color: "#625C54" }}>행정 처분</p>
+          <p className="font-display" style={{ margin: 0, fontSize: 25, lineHeight: 1.3, color: "#A94C40" }}>{report.disposition}</p>
+        </div>
+        <div style={{ fontSize: 19 }}>
+          {report.topType && <p style={{ margin: 0 }}>제일 많은 민원: <span className="font-display">{report.topType}</span></p>}
+          {report.titles[0] && <p style={{ margin: "4px 0 0" }}>받은 칭호: <span className="font-display" style={{ color: "#A94C40" }}>{report.titles[0]}</span></p>}
+        </div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", gap: 8, marginTop: 14 }}>
+        <Character config={citizen.character} size={104} title="" />
+        <Mascot size={92} pose="document" />
       </div>
     </Frame>
   );
