@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ErrorNote, LoadingNote, NeedRegistration } from "@/components/ui/StateNotes";
+import { CommentSection } from "@/features/comments/CommentSection";
 import { CaseSheet } from "@/features/complaint/CaseSheet";
 import { CaseShareActions } from "@/features/share/CaseShareActions";
 import { citizenRepository } from "@/lib/citizen/repository";
@@ -105,6 +106,7 @@ export function RecordsScreen() {
                     </p>
                   )}
                   <CaseShareActions record={item} citizen={state.citizen} />
+                  {citizenRepository.socialEnabled && item.visibility === "public" && <div className="paper p-4"><CommentSection caseId={item.id} canAct /></div>}
                   {visibilityError && <p role="alert" className="font-bold text-brick">{visibilityError}</p>}
                   <div className="flex flex-wrap justify-end gap-2">
                     {citizenRepository.socialEnabled && (

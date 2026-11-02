@@ -141,6 +141,24 @@ export const guestRepository: CitizenRepository = {
   async myJointTitles() {
     return [];
   },
+  async listComments() {
+    return [];
+  },
+  async addComment() {
+    throw new Error("서버가 연결되지 않아 댓글을 쓸 수 없습니다.");
+  },
+  async deleteComment() {},
+  async reportComment() {},
+  async isAdmin() {
+    return false;
+  },
+  async adminOverview() {
+    throw new Error("서버가 연결되지 않았습니다.");
+  },
+  async adminReports() {
+    return [];
+  },
+  async adminSetHidden() {},
   async deleteMyAccount() {
     removeKey(KEY);
     removeKey(CASES_KEY);

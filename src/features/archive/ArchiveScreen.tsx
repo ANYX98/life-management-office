@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Character } from "@/components/character/Character";
 import { ErrorNote, LoadingNote } from "@/components/ui/StateNotes";
+import { CommentSection } from "@/features/comments/CommentSection";
 import { CaseBody } from "@/features/complaint/CaseBody";
 import { REACTIONS, REPORT_REASONS, type ArchiveSort, type ReactionKind, type ReportReason } from "@/lib/archive/reactions";
 import { citizenRepository } from "@/lib/citizen/repository";
@@ -195,6 +196,8 @@ function PublicCaseCard({ item, canAct, onHide }: { item: PublicCase; canAct: bo
           {problem} {!canAct && <Link href="/register" className="text-brick">등록하러 가기</Link>}
         </p>
       )}
+
+      <CommentSection caseId={item.id} canAct={canAct} />
 
       {!item.isMine && (
         <div className="mt-3 flex flex-wrap items-center justify-end gap-3 text-sm">

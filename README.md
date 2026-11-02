@@ -36,8 +36,17 @@ Windows에서도 같은 명령을 씁니다. `npm install`이 만드는 `package
 
 1. 캡차 키 연결, 이메일 발송 서비스 연결
 2. 사건기록실 다음: 댓글, 공개 프로필, 관리자 복구 화면, 캡차
-3. 댓글과 공개 프로필, 관리자 화면
+3. 공개 프로필 여부 결정
 4. AI는 처분서 문구 담당으로만, 이용자가 생기고 위기 대응 절차를 갖춘 뒤 검토. 대화 상대 AI는 넣지 않음
+
+## 운영자 등록
+
+`supabase/migrations/0009_admin_comments.sql` 실행 후 SQL 편집기에서 한 번만 실행합니다. `/admin`은 등록된 계정에만 열립니다.
+
+```sql
+insert into public.admins (user_id)
+select id from auth.users where email = '내 로그인 이메일';
+```
 
 ## 폴더 구조
 

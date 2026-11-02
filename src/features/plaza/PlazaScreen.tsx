@@ -210,7 +210,7 @@ function StatsSheet() {
 
 /** 아직 만들지 않은 시설은 링크를 걸지 않고 공사 중임을 그대로 보여 준다. */
 const FACILITIES = [
-  { name: "댓글과 공개 프로필", note: "시민끼리 나누는 이야기", stage: "4단계" },
+  { name: "공개 프로필", note: "시민별 공개 사건 모아 보기", stage: "검토 중" },
   { name: "공단 통계청", note: "전체 시민 활동 집계", stage: "4단계" },
 ];
 

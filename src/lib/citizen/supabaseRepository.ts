@@ -4,7 +4,7 @@ import type { ReactionCounts, ReactionKind } from "@/lib/archive/reactions";
 import type { CategoryId } from "@/lib/complaint/content";
 import { generateCase } from "@/lib/complaint/generate";
 import { isKstMonday } from "@/lib/daily/date";
-import type { CaseRecord, CaseVisibility, Citizen, CitizenRepository, PublicCase } from "./types";
+import type { AdminOverview, CaseRecord, CaseVisibility, Citizen, CitizenRepository, PublicCase } from "./types";
 
 type Row = {
   id: string;
@@ -308,6 +308,46 @@ export const supabaseRepository: CitizenRepository = {
     const { data, error } = await getSupabase().rpc("my_joint_titles");
     if (error) return [];
     return data as string[];
+  },
+  async listComments(caseId) {
+    const { data, error } = await getSupabase().rpc("case_comments", { p_case: caseId });
+    if (error) throw failure("댓글 불러오기");
+    return (data as { id: string; body: string; created_at: string; nickname: string; character: unknown; is_mine: boolean; can_delete: boolean }[]).map((row) => ({
+      id: row.id, body: row.body, createdAt: row.created_at, nickname: row.nickname, character: sanitizeCharacter(row.character), isMine: row.is_mine, canDelete: row.can_delete,
+    }));
+  },
+  async addComment(caseId, body) {
+    const { error } = await getSupabase().rpc("add_comment", { p_case: caseId, p_body: body });
+    if (error) throw new Error(/too many/.test(error.message) ? "댓글을 너무 많이 쓰셨습니다. 잠시 뒤에 쓰십시오." : "댓글을 남기지 못했습니다. 잠시 후 다시 시도해 주세요.");
+  },
+  async deleteComment(commentId) {
+    const { error } = await getSupabase().rpc("delete_comment", { p_comment: commentId });
+    if (error) throw failure("댓글 삭제");
+  },
+  async reportComment(commentId, reason) {
+    const { error } = await getSupabase().rpc("report_comment", { p_comment: commentId, p_reason: reason });
+    if (error) throw failure("신고");
+  },
+  async isAdmin() {
+    if (!(await currentUserId())) return false;
+    const { data, error } = await getSupabase().rpc("is_admin");
+    return !error && data === true;
+  },
+  async adminOverview() {
+    const { data, error } = await getSupabase().rpc("admin_overview");
+    if (error) throw failure("통계 불러오기");
+    return data as AdminOverview;
+  },
+  async adminReports() {
+    const { data, error } = await getSupabase().rpc("admin_reports");
+    if (error) throw failure("신고 목록 불러오기");
+    return (data as { kind: "case" | "comment"; target_id: string; label: string; body: string; nickname: string; hidden: boolean; reports: number; reasons: string[]; last_at: string }[]).map((row) => ({
+      kind: row.kind, targetId: row.target_id, label: row.label, body: row.body, nickname: row.nickname, hidden: row.hidden, reports: Number(row.reports), reasons: row.reasons, lastAt: row.last_at,
+    }));
+  },
+  async adminSetHidden(kind, targetId, hidden) {
+    const { error } = await getSupabase().rpc("admin_set_hidden", { p_kind: kind, p_target: targetId, p_hidden: hidden });
+    if (error) throw failure("처리");
   },
   async deleteMyAccount() {
     const supabase = getSupabase();

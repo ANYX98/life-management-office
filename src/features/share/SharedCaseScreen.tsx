@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Character } from "@/components/character/Character";
 import { LoadingNote } from "@/components/ui/StateNotes";
+import { CommentSection } from "@/features/comments/CommentSection";
 import { CaseBody } from "@/features/complaint/CaseBody";
 import { REACTIONS } from "@/lib/archive/reactions";
 import { citizenRepository } from "@/lib/citizen/repository";
@@ -68,6 +69,7 @@ export function SharedCaseScreen({ id }: { id: string }) {
         {REACTIONS.some((reaction) => item.counts[reaction.id]) && (
           <p className="mt-3 text-sm">시민 반응: {REACTIONS.filter((reaction) => item.counts[reaction.id]).map((reaction) => `${reaction.label} ${item.counts[reaction.id]}`).join(", ")}</p>
         )}
+        <CommentSection caseId={item.id} canAct={state.status === "ready"} />
       </article>
       <div className="grid justify-items-center gap-2 text-center">
         <p>당신의 인생, 저희가 대신 이해해 드립니다. 아마도요.</p>

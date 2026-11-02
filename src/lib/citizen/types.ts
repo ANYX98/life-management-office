@@ -76,6 +76,30 @@ export type JointEvent = {
 
 export type JointResult = { title: string; total: number; notice: string | null };
 
+export type CaseComment = {
+  id: string;
+  body: string;
+  createdAt: string;
+  nickname: string;
+  character: CharacterConfig;
+  isMine: boolean;
+  canDelete: boolean;
+};
+
+export type AdminOverview = Record<"citizens" | "cases" | "public_cases" | "hidden_cases" | "comments" | "reactions" | "share_visits" | "share_signups" | "joint_votes_this_week", number>;
+
+export type AdminReport = {
+  kind: "case" | "comment";
+  targetId: string;
+  label: string;
+  body: string;
+  nickname: string;
+  hidden: boolean;
+  reports: number;
+  reasons: string[];
+  lastAt: string;
+};
+
 export interface CitizenRepository {
   /** false면 서버가 없는 게스트 모드라 다른 시민의 사건을 볼 수 없다. */
   readonly socialEnabled: boolean;
@@ -106,6 +130,14 @@ export interface CitizenRepository {
   lastJointResult(): Promise<JointResult | null>;
   voteJoint(optionId: string): Promise<void>;
   myJointTitles(): Promise<string[]>;
+  listComments(caseId: string): Promise<CaseComment[]>;
+  addComment(caseId: string, body: string): Promise<void>;
+  deleteComment(commentId: string): Promise<void>;
+  reportComment(commentId: string, reason: ReportReason): Promise<void>;
+  isAdmin(): Promise<boolean>;
+  adminOverview(): Promise<AdminOverview>;
+  adminReports(): Promise<AdminReport[]>;
+  adminSetHidden(kind: "case" | "comment", targetId: string, hidden: boolean): Promise<void>;
   deleteMyAccount(): Promise<void>;
   getPublicCase(id: string): Promise<PublicCase | null>;
   recordShareEvent(kind: "visit" | "signup", caseId: string): Promise<void>;
