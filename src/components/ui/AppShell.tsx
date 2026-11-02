@@ -21,15 +21,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         )}
         {state.status === "none" && (
-          <Link href="/register" className="btn btn-primary">
-            시민 등록
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/account" className="btn px-3">로그인</Link>
+            <Link href="/register" className="btn btn-primary px-3">시민 등록</Link>
+          </div>
         )}
       </header>
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-12">{children}</main>
       <footer className="px-4 py-6 text-center text-sm text-ink-soft">
         인생관리공단은 실제 행정기관이 아닙니다. 당신의 인생에 대한 어떤 권한도 없습니다.
-        <span className="mt-1 block"><Link href="/privacy" className="text-ink-soft">개인정보 안내</Link> / <Link href="/account" className="text-ink-soft">내 시민증 찾기</Link></span>
+        <span className="mt-1 block"><Link href="/privacy" className="text-ink-soft">개인정보 안내</Link> / <Link href="/account" className="text-ink-soft">계정과 내 정보</Link></span>
       </footer>
     </div>
   );
