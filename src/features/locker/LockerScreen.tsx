@@ -13,12 +13,14 @@ import { STICKERS } from "@/lib/locker/stickers";
 export function LockerScreen() {
   const { state, reload } = useCitizen();
   const [cases, setCases] = useState<CaseRecord[] | null>(null);
+  const [jointTitles, setJointTitles] = useState<string[]>([]);
   const [failed, setFailed] = useState(false);
   const ready = state.status === "ready";
 
   const load = () => {
     setFailed(false);
     citizenRepository.listCases().then(setCases).catch(() => setFailed(true));
+    citizenRepository.myJointTitles().then(setJointTitles).catch(() => setJointTitles([]));
   };
   useEffect(() => {
     if (ready) load();
@@ -30,17 +32,17 @@ export function LockerScreen() {
   if (failed) return <ErrorNote message="사물함을 열지 못했습니다." onRetry={load} />;
   if (!cases) return <LoadingNote label="사물함을 여는 중입니다" />;
 
-  return <Locker citizen={state.citizen} cases={cases} />;
+  return <Locker citizen={state.citizen} cases={cases} jointTitles={jointTitles} />;
 }
 
-function Locker({ citizen, cases }: { citizen: Citizen; cases: CaseRecord[] }) {
+function Locker({ citizen, cases, jointTitles }: { citizen: Citizen; cases: CaseRecord[]; jointTitles: string[] }) {
   const [character, setCharacter] = useState(citizen.character);
   const [title, setTitle] = useState(citizen.title);
   const [problem, setProblem] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const count = cases.length;
   const earnedStickers = STICKERS.filter((sticker) => sticker.earned(cases)).length;
-  const titles = [...new Set([INITIAL_TITLE, ...cases.map((item) => item.awardedTitle).filter((value): value is string => Boolean(value))])];
+  const titles = [...new Set([INITIAL_TITLE, ...cases.map((item) => item.awardedTitle).filter((value): value is string => Boolean(value)), ...jointTitles])];
 
   const run = async (work: () => Promise<void>) => {
     setBusy(true);

@@ -287,6 +287,28 @@ export const supabaseRepository: CitizenRepository = {
     const { error } = await getSupabase().rpc("set_my_title", { p_title: title });
     if (error) throw failure("대표 칭호 변경");
   },
+  async currentJoint() {
+    const { data, error } = await getSupabase().rpc("current_joint");
+    if (error) throw failure("공동 사건 불러오기");
+    if (!data) return null;
+    const row = data as { id: string; title: string; description: string; options: { id: string; label: string }[]; reward_title: string; counts: Record<string, number>; my_choice: string | null };
+    return { id: row.id, title: row.title, description: row.description, options: row.options, rewardTitle: row.reward_title, counts: row.counts ?? {}, myChoice: row.my_choice };
+  },
+  async lastJointResult() {
+    const { data, error } = await getSupabase().rpc("last_joint_result");
+    if (error || !data) return null;
+    const row = data as { title: string; total: number; notice: string | null };
+    return { title: row.title, total: Number(row.total), notice: row.notice };
+  },
+  async voteJoint(optionId) {
+    const { error } = await getSupabase().rpc("vote_joint", { p_option: optionId });
+    if (error) throw failure("투표");
+  },
+  async myJointTitles() {
+    const { data, error } = await getSupabase().rpc("my_joint_titles");
+    if (error) return [];
+    return data as string[];
+  },
   async deleteMyAccount() {
     const supabase = getSupabase();
     const { error } = await supabase.rpc("delete_my_account");

@@ -129,6 +129,18 @@ export const guestRepository: CitizenRepository = {
     if (!current) throw new Error("등록된 시민 정보를 찾지 못했습니다.");
     save({ ...current, title });
   },
+  async currentJoint() {
+    return null;
+  },
+  async lastJointResult() {
+    return null;
+  },
+  async voteJoint() {
+    throw new Error("서버가 연결되지 않아 투표할 수 없습니다.");
+  },
+  async myJointTitles() {
+    return [];
+  },
   async deleteMyAccount() {
     removeKey(KEY);
     removeKey(CASES_KEY);

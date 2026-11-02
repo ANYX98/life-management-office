@@ -10,6 +10,7 @@ import { useCitizen } from "@/lib/citizen/useCitizen";
 import { MASCOT_LINES_CITIZEN, MASCOT_LINES_GUEST, MASCOT_POKE_LINES, NOTICES } from "@/lib/daily/content";
 import { dailyIndex, formatKoreanDate, useToday } from "@/lib/daily/today";
 import { DailyIncident } from "./DailyIncident";
+import { JointEventCard } from "./JointEventCard";
 
 const POKE_EXPRESSIONS: MascotExpression[] = ["deadpan", "worried", "surprised", "blink"];
 
@@ -25,6 +26,7 @@ export function PlazaScreen() {
         <Notice today={today} />
         {today ? <DailyIncident today={today} seed={citizen?.id ?? "guest"} /> : <div className="skeleton h-72" />}
       </div>
+      {citizenRepository.socialEnabled && <JointEventCard canVote={Boolean(citizen)} />}
       <div className="grid items-start gap-8 md:grid-cols-[1.15fr_1fr]">
         <RecordsPreview />
         <StatsSheet />
@@ -208,7 +210,6 @@ function StatsSheet() {
 
 /** 아직 만들지 않은 시설은 링크를 걸지 않고 공사 중임을 그대로 보여 준다. */
 const FACILITIES = [
-  { name: "공동 사건", note: "모든 시민이 함께하는 투표", stage: "다음" },
   { name: "댓글과 공개 프로필", note: "시민끼리 나누는 이야기", stage: "4단계" },
   { name: "공단 통계청", note: "전체 시민 활동 집계", stage: "4단계" },
 ];

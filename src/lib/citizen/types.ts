@@ -64,6 +64,18 @@ export type PublicCase = {
   isMine: boolean;
 };
 
+export type JointEvent = {
+  id: string;
+  title: string;
+  description: string;
+  options: { id: string; label: string }[];
+  rewardTitle: string;
+  counts: Record<string, number>;
+  myChoice: string | null;
+};
+
+export type JointResult = { title: string; total: number; notice: string | null };
+
 export interface CitizenRepository {
   /** false면 서버가 없는 게스트 모드라 다른 시민의 사건을 볼 수 없다. */
   readonly socialEnabled: boolean;
@@ -90,6 +102,10 @@ export interface CitizenRepository {
   loginWithPassword(email: string, password: string, captchaToken?: string | null): Promise<void>;
   /** 실제로 받은 칭호 중 하나를 대표 칭호로 정한다. */
   setTitle(title: string): Promise<void>;
+  currentJoint(): Promise<JointEvent | null>;
+  lastJointResult(): Promise<JointResult | null>;
+  voteJoint(optionId: string): Promise<void>;
+  myJointTitles(): Promise<string[]>;
   deleteMyAccount(): Promise<void>;
   getPublicCase(id: string): Promise<PublicCase | null>;
   recordShareEvent(kind: "visit" | "signup", caseId: string): Promise<void>;
