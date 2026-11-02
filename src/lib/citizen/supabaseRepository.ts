@@ -283,6 +283,10 @@ export const supabaseRepository: CitizenRepository = {
     // 집계 실패가 화면을 막지 않게 오류는 무시한다.
     await getSupabase().rpc("record_share_event", { p_kind: kind, p_case_id: caseId });
   },
+  async setTitle(title) {
+    const { error } = await getSupabase().rpc("set_my_title", { p_title: title });
+    if (error) throw failure("대표 칭호 변경");
+  },
   async deleteMyAccount() {
     const supabase = getSupabase();
     const { error } = await supabase.rpc("delete_my_account");

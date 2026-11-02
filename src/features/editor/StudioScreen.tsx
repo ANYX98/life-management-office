@@ -45,6 +45,7 @@ export function StudioScreen() {
         value={draft}
         onChange={setDraft}
         resetTo={state.citizen.character}
+        caseCount={state.citizen.caseCount}
         primaryAction={
           <button type="button" className="btn btn-primary" disabled={saving} onClick={save}>
             {saving ? "저장 중…" : "저장"}

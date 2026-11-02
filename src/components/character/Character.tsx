@@ -48,9 +48,11 @@ export function Character({ config, size = 200, rough = true, crop = "full", tit
   const head = (node: ReactNode) => <g transform={`translate(120 ${top}) scale(${headScale} 1)`}>{node}</g>;
   const face = (node: ReactNode) => <g transform={`translate(120 ${faceY}) scale(${faceScale})`}>{node}</g>;
 
-  const accessory = ACCESSORY_ART[config.accessory];
-  const accessoryAt = (anchor: AccessoryAnchor) => (accessory?.at === anchor ? accessory.art : null);
-  const showHair = !(config.hat !== "none" && HAIR_HIDDEN_BY_HAT.includes(config.hair));
+  // 액세서리는 두 개까지 함께 착용한다. 같은 위치면 '추가 장식'이 위로 온다.
+  const worn = [config.accessory, config.accessory2 ?? "none"].map((id) => ACCESSORY_ART[id]);
+  const accessoryAt = (anchor: AccessoryAnchor) => worn.filter((item) => item?.at === anchor).map((item, index) => <g key={index}>{item!.art}</g>);
+  const bagOnHead = config.hat === "paperbag";
+  const showHair = !bagOnHead && !(config.hat !== "none" && HAIR_HIDDEN_BY_HAT.includes(config.hair));
 
   const handX = 120 + armHalf + 22;
   const handY = armY - (hasProp ? 10 : -22);

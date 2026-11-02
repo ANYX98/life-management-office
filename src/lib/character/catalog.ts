@@ -13,6 +13,12 @@ export const EYES = [
   { id: "closed", label: "수면 눈" },
   { id: "stare", label: "멍한 눈" },
   { id: "dazed", label: "넋 나간 눈" },
+  { id: "sparkle", label: "반짝 눈" },
+  { id: "wink", label: "윙크" },
+  { id: "smiling", label: "눈웃음" },
+  { id: "lashes", label: "속눈썹" },
+  { id: "cat", label: "고양이 눈" },
+  { id: "heart", label: "하트 눈" },
 ] as const;
 
 export const MOUTHS = [
@@ -22,6 +28,11 @@ export const MOUTHS = [
   { id: "open", label: "어이없음" },
   { id: "wobbly", label: "참는 중" },
   { id: "teeth", label: "억지웃음" },
+  { id: "cat", label: "고양이 입" },
+  { id: "tongue", label: "메롱" },
+  { id: "pout", label: "뾰로통" },
+  { id: "lips", label: "립스틱" },
+  { id: "tiny", label: "쪼그만 입" },
 ] as const;
 
 export const HAIRS = [
@@ -34,6 +45,14 @@ export const HAIRS = [
   { id: "pigtails", label: "양갈래" },
   { id: "messy", label: "기상 직후" },
   { id: "sprout", label: "새싹" },
+  { id: "ponytail", label: "포니테일" },
+  { id: "bangs", label: "일자 앞머리" },
+  { id: "bun", label: "똥머리" },
+  { id: "wave", label: "웨이브" },
+  { id: "short", label: "숏컷" },
+  { id: "sidepart", label: "가르마" },
+  { id: "twinbun", label: "쌍똥머리" },
+  { id: "mullet", label: "울프컷" },
 ] as const;
 
 export const HATS = [
@@ -44,6 +63,14 @@ export const HATS = [
   { id: "helmet", label: "안전모" },
   { id: "crown", label: "종이 왕관" },
   { id: "straw", label: "밀짚모자" },
+  { id: "bucket", label: "버킷햇" },
+  { id: "beret", label: "베레모" },
+  { id: "headband", label: "헤어밴드" },
+  { id: "catears", label: "고양이 귀" },
+  { id: "bunny", label: "토끼 귀" },
+  { id: "ribbon", label: "큰 리본" },
+  { id: "paperbag", label: "종이봉투" },
+  { id: "potatohat", label: "감자 모자" },
 ] as const;
 
 export const OUTFITS = [
@@ -58,6 +85,13 @@ export const OUTFITS = [
   { id: "overalls", label: "멜빵바지" },
   { id: "flannel", label: "체크 셔츠" },
   { id: "blanket", label: "이불 외투" },
+  { id: "cardigan", label: "카디건" },
+  { id: "dress", label: "원피스" },
+  { id: "sweatshirt", label: "맨투맨" },
+  { id: "uniform", label: "교복" },
+  { id: "tracksuit", label: "트레이닝복" },
+  { id: "hanbok", label: "생활 한복" },
+  { id: "officer", label: "공단 정복" },
 ] as const;
 
 export const GLASSES = [
@@ -66,6 +100,9 @@ export const GLASSES = [
   { id: "square", label: "뿔테" },
   { id: "shades", label: "선글라스" },
   { id: "half", label: "반달 안경" },
+  { id: "heart", label: "하트 안경" },
+  { id: "star", label: "별 안경" },
+  { id: "rimless", label: "무테" },
 ] as const;
 
 export const ACCESSORIES = [
@@ -85,6 +122,14 @@ export const ACCESSORIES = [
   { id: "medal", label: "개근 메달" },
   { id: "mask", label: "마스크" },
   { id: "darkcircle", label: "다크서클" },
+  { id: "necklace", label: "목걸이" },
+  { id: "choker", label: "초커" },
+  { id: "hairpin", label: "머리핀" },
+  { id: "earbuds", label: "무선 이어폰" },
+  { id: "freckles", label: "주근깨" },
+  { id: "blush", label: "진한 볼터치" },
+  { id: "starsticker", label: "별 스티커" },
+  { id: "officerbadge", label: "공단 배지" },
 ] as const;
 
 export const PROPS = [
@@ -95,6 +140,14 @@ export const PROPS = [
   { id: "pillow", label: "베개" },
   { id: "ramen", label: "컵라면" },
   { id: "flag", label: "백기" },
+  { id: "bouquet", label: "꽃다발" },
+  { id: "balloon", label: "풍선" },
+  { id: "laptop", label: "노트북" },
+  { id: "book", label: "책" },
+  { id: "bubbletea", label: "버블티" },
+  { id: "plush", label: "곰 인형" },
+  { id: "stampitem", label: "공단 도장" },
+  { id: "burning", label: "불타는 할 일" },
 ] as const;
 
 export const BODY_COLORS = [
@@ -106,6 +159,12 @@ export const BODY_COLORS = [
   { id: "#A8C6CB", label: "소다" },
   { id: "#C7A6B8", label: "자색 고구마" },
   { id: "#A39C8E", label: "구운 김" },
+  { id: "#F7C9B6", label: "복숭아" },
+  { id: "#FBE3D6", label: "우유" },
+  { id: "#E9A9B8", label: "딸기" },
+  { id: "#C4B5E3", label: "라벤더" },
+  { id: "#BFE3C8", label: "민트" },
+  { id: "#F2A65A", label: "당근" },
 ] as const;
 
 export const HAIR_COLORS = [
@@ -115,6 +174,12 @@ export const HAIR_COLORS = [
   { id: "#E7C85C", label: "머스터드" },
   { id: "#7F9470", label: "이끼" },
   { id: "#EDE3D0", label: "새치 만렙" },
+  { id: "#E9A9B8", label: "분홍" },
+  { id: "#8E7CC3", label: "보라" },
+  { id: "#5E8FB0", label: "하늘" },
+  { id: "#C98A4B", label: "캐러멜" },
+  { id: "#F4E3A1", label: "금발" },
+  { id: "#FFFBF2", label: "백발" },
 ] as const;
 
 export const OUTFIT_COLORS = [
@@ -124,6 +189,12 @@ export const OUTFIT_COLORS = [
   { id: "#7F9470", label: "세이지" },
   { id: "#5E7F8C", label: "교복 남색" },
   { id: "#EFE6D6", label: "미색" },
+  { id: "#E9A9B8", label: "분홍" },
+  { id: "#C4B5E3", label: "라벤더" },
+  { id: "#BFE3C8", label: "민트" },
+  { id: "#34312E", label: "검정" },
+  { id: "#FFFBF2", label: "흰색" },
+  { id: "#D9A36B", label: "베이지" },
 ] as const;
 
 type Ids<T extends readonly { id: string }[]> = T[number]["id"];
@@ -151,6 +222,7 @@ export type CharacterConfig = {
   outfitColor: string;
   glasses: GlassesId;
   accessory: AccessoryId;
+  accessory2: AccessoryId;
   prop: PropId;
 };
 
@@ -167,6 +239,7 @@ export const DEFAULT_CHARACTER: CharacterConfig = {
   outfitColor: "#7F9470",
   glasses: "none",
   accessory: "none",
+  accessory2: "none",
   prop: "none",
 };
 
@@ -190,6 +263,7 @@ export const CATEGORIES: readonly {
   { key: "outfit", label: "의상", options: OUTFITS, kind: "part", swatch: { key: "outfitColor", label: "의상 색", options: OUTFIT_COLORS } },
   { key: "glasses", label: "안경", options: GLASSES, kind: "part" },
   { key: "accessory", label: "액세서리", options: ACCESSORIES, kind: "part" },
+  { key: "accessory2", label: "추가 장식", options: ACCESSORIES, kind: "part" },
   { key: "prop", label: "소품", options: PROPS, kind: "part" },
 ];
 
@@ -205,6 +279,7 @@ const ALLOWED: Record<PartKey, OptionList> = {
   outfitColor: OUTFIT_COLORS,
   glasses: GLASSES,
   accessory: ACCESSORIES,
+  accessory2: ACCESSORIES,
   prop: PROPS,
 };
 
@@ -218,8 +293,32 @@ export function sanitizeCharacter(input: unknown): CharacterConfig {
   return result as CharacterConfig;
 }
 
+/** 민원을 내면 열리는 특별 아이템. 나머지 파츠는 처음부터 전부 무료다. */
+export const SPECIAL_ITEMS: readonly { part: PartKey; id: string; label: string; needCases: number }[] = [
+  { part: "prop", id: "stampitem", label: "공단 도장", needCases: 1 },
+  { part: "outfit", id: "officer", label: "공단 정복", needCases: 3 },
+  { part: "hat", id: "paperbag", label: "종이봉투", needCases: 5 },
+  { part: "prop", id: "burning", label: "불타는 할 일", needCases: 7 },
+  { part: "accessory", id: "officerbadge", label: "공단 배지", needCases: 10 },
+  { part: "hat", id: "potatohat", label: "감자 모자", needCases: 15 },
+];
+
+export function specialFor(part: string, id: string) {
+  const key = part === "accessory2" ? "accessory" : part;
+  return SPECIAL_ITEMS.find((item) => item.part === key && item.id === id);
+}
+
+export function isUnlocked(part: string, id: string, caseCount: number): boolean {
+  const special = specialFor(part, id);
+  return !special || caseCount >= special.needCases;
+}
+
 export function randomCharacter(random: () => number = Math.random): CharacterConfig {
-  const pick = <T extends { id: string }>(list: readonly T[]) => list[Math.floor(random() * list.length)].id;
+  // 특별 아이템은 랜덤에 나오지 않는다.
+  const pick = <T extends { id: string }>(list: readonly T[]) => {
+    const free = list.filter((item) => !SPECIAL_ITEMS.some((special) => special.id === item.id));
+    return free[Math.floor(random() * free.length)].id;
+  };
   /** 모든 파츠를 항상 착용하면 지저분해지므로 '없음' 비율을 높인다. */
   const sparse = <T extends { id: string }>(list: readonly T[], chance: number) => (random() < chance ? pick(list) : "none");
   return {
@@ -235,6 +334,7 @@ export function randomCharacter(random: () => number = Math.random): CharacterCo
     outfitColor: pick(OUTFIT_COLORS),
     glasses: sparse(GLASSES, 0.35),
     accessory: sparse(ACCESSORIES, 0.5),
+    accessory2: sparse(ACCESSORIES, 0.2),
     prop: sparse(PROPS, 0.5),
   } as CharacterConfig;
 }

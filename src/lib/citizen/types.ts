@@ -88,6 +88,8 @@ export interface CitizenRepository {
   /** 이메일이 연결된 뒤 비밀번호를 정하거나 바꾼다. */
   setPassword(password: string): Promise<void>;
   loginWithPassword(email: string, password: string, captchaToken?: string | null): Promise<void>;
+  /** 실제로 받은 칭호 중 하나를 대표 칭호로 정한다. */
+  setTitle(title: string): Promise<void>;
   deleteMyAccount(): Promise<void>;
   getPublicCase(id: string): Promise<PublicCase | null>;
   recordShareEvent(kind: "visit" | "signup", caseId: string): Promise<void>;

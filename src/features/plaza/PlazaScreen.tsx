@@ -102,6 +102,7 @@ function CitizenSlip({ citizen }: { citizen: Citizen }) {
         <Link href="/complaint" className="btn btn-primary">민원 접수</Link>
         <Link href="/records" className="btn">내 기록</Link>
         <Link href="/weekly" className="btn">주간 보고서</Link>
+        <Link href="/locker" className="btn">사물함</Link>
         <Link href="/card" className="btn">시민증</Link>
         <Link href="/studio" className="btn">캐릭터 꾸미기</Link>
       </div>
@@ -207,7 +208,7 @@ function StatsSheet() {
 
 /** 아직 만들지 않은 시설은 링크를 걸지 않고 공사 중임을 그대로 보여 준다. */
 const FACILITIES = [
-  { name: "공단 사물함", note: "스티커와 아이템 보관", stage: "3단계" },
+  { name: "공동 사건", note: "모든 시민이 함께하는 투표", stage: "다음" },
   { name: "댓글과 공개 프로필", note: "시민끼리 나누는 이야기", stage: "4단계" },
   { name: "공단 통계청", note: "전체 시민 활동 집계", stage: "4단계" },
 ];
@@ -216,7 +217,7 @@ function FacilityMap() {
   return (
     <section>
       <h2 className="text-2xl">공단 청사 안내도</h2>
-      <p className="mb-3">지금 이용할 수 있는 곳은 광장, 시민 등록실, 시민증, 증명사진 촬영실, 민원 접수실, 나의 인생 기록실, 민원 3번 창구, 시민 사건기록실, 주간 인생 보고서입니다.</p>
+      <p className="mb-3">지금 이용할 수 있는 곳은 광장, 시민 등록실, 시민증, 증명사진 촬영실, 민원 접수실, 나의 인생 기록실, 민원 3번 창구, 시민 사건기록실, 주간 인생 보고서, 공단 사물함입니다.</p>
       <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {FACILITIES.map((facility) => (
           <li key={facility.name} className="flex items-center justify-between gap-3 border-b-2 border-dashed border-ink/30 py-2">

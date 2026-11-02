@@ -124,6 +124,11 @@ export const guestRepository: CitizenRepository = {
   async recordShareEvent() {
     /* 게스트 모드에는 집계할 곳이 없다. */
   },
+  async setTitle(title) {
+    const current = read();
+    if (!current) throw new Error("등록된 시민 정보를 찾지 못했습니다.");
+    save({ ...current, title });
+  },
   async deleteMyAccount() {
     removeKey(KEY);
     removeKey(CASES_KEY);

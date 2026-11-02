@@ -107,4 +107,61 @@ export const OUTFIT_ART: Record<OutfitId, (y: number, c: string) => ReactNode> =
       <path d={`M96 ${y - 18}C106 ${y + 6} 120 ${y + 8} 126 ${y + 30}`} fill="none" strokeWidth={3} />
     </g>
   ),
+  cardigan: (y, c) => (
+    <g>
+      {panel(y, "#FFFBF2")}
+      <path d={`M${X0} ${y + 8}C60 ${y - 2} 82 ${y - 4} 98 ${y - 4}L106 260H${X0}Z`} fill={c} />
+      <path d={`M${X0 + W} ${y + 8}C180 ${y - 2} 158 ${y - 4} 142 ${y - 4}L134 260H${X0 + W}Z`} fill={c} />
+      {[26, 52, 78].map((d) => <circle key={d} cx={103 + d / 26} cy={y + d} r={3} fill="#FFFBF2" strokeWidth={2} />)}
+    </g>
+  ),
+  dress: (y, c) => (
+    <g>
+      {panel(y, c)}
+      <path d={`M94 ${y - 3}C102 ${y + 16} 138 ${y + 16} 146 ${y - 3}`} fill="#FFFBF2" />
+      <path d={`M${X0} ${y + 66}C80 ${y + 58} 160 ${y + 58} ${X0 + W} ${y + 66}`} fill="none" strokeWidth={3} />
+      {[70, 96, 120, 144, 170].map((x) => <path key={x} d={`M${x} ${y + 66}L${x + (x - 120) / 5} 260`} fill="none" strokeWidth={2.5} strokeOpacity={0.55} />)}
+    </g>
+  ),
+  sweatshirt: (y, c) => (
+    <g>
+      {panel(y, c)}
+      <path d={`M98 ${y - 3}C106 ${y + 10} 134 ${y + 10} 142 ${y - 3}`} fill="none" strokeWidth={6} stroke="#FFFBF2" />
+      <text x={120} y={y + 52} fontSize={22} fontWeight={700} fill="#FFFBF2" stroke="none" textAnchor="middle">OFF</text>
+    </g>
+  ),
+  uniform: (y, c) => (
+    <g>
+      {panel(y, "#FFFBF2")}
+      <path d={`M${X0} ${y + 8}C60 ${y - 2} 84 ${y - 4} 98 ${y - 4}L120 ${y + 34}L142 ${y - 4}C156 ${y - 4} 180 ${y - 2} ${X0 + W} ${y + 8}V${H + 20}H${X0}Z`} fill={c} />
+      <path d={`M120 ${y + 6}L113 ${y + 14}L120 ${y + 22}L127 ${y + 14}Z`} fill="#A94C40" strokeWidth={2.5} />
+      <rect x={144} y={y + 34} width={22} height={7} fill="#FFFBF2" strokeWidth={2} />
+    </g>
+  ),
+  tracksuit: (y, c) => (
+    <g>
+      {panel(y, c)}
+      <path d={`M120 ${y + 2}V260`} fill="none" strokeWidth={3} />
+      <path d={`M72 ${y}V260M168 ${y}V260`} fill="none" stroke="#FFFBF2" strokeWidth={7} />
+      <path d={`M100 ${y - 3}L120 ${y + 12}L140 ${y - 3}`} fill="none" strokeWidth={3.5} />
+    </g>
+  ),
+  hanbok: (y, c) => (
+    <g>
+      {panel(y, "#FFFBF2")}
+      <path d={`M${X0} ${y + 8}C70 ${y - 4} 92 ${y - 4} 100 ${y - 4}L150 ${y + 50}V${y + 54}H${X0}Z`} fill={c} />
+      <path d={`M${X0 + W} ${y + 8}C170 ${y - 4} 148 ${y - 4} 140 ${y - 4}L104 ${y + 34}L150 ${y + 54}H${X0 + W}Z`} fill={c} />
+      <path d={`M${X0} ${y + 54}H${X0 + W}V260H${X0}Z`} fill="#A94C40" />
+      <path d={`M130 ${y + 42}C150 ${y + 42} 148 ${y + 60} 132 ${y + 54}L142 ${y + 90}M130 ${y + 42}L118 ${y + 84}`} fill="none" stroke="#FFFBF2" strokeWidth={4} />
+    </g>
+  ),
+  officer: (y) => (
+    <g>
+      {panel(y, "#4A4641")}
+      <path d={`M98 ${y - 2}L120 ${y + 40}L142 ${y - 2}Z`} fill="#FFFBF2" />
+      <path d={`M120 ${y + 8}L113 ${y + 16}L117 ${y + 44}L120 ${y + 50}L123 ${y + 44}L127 ${y + 16}Z`} fill="#A94C40" strokeWidth={3} />
+      <path d={`M98 ${y - 2}L82 ${y + 18}L118 ${y + 58}V260M142 ${y - 2}L158 ${y + 18}L122 ${y + 58}`} fill="none" stroke="#2A2825" strokeWidth={3.5} />
+      <rect x={144} y={y + 38} width={22} height={13} rx={2} fill="#E7C85C" strokeWidth={2.5} />
+    </g>
+  ),
 };

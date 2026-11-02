@@ -133,4 +133,62 @@ export const ACCESSORY_ART: Record<AccessoryId, { at: AccessoryAnchor; art: Reac
       </g>
     ),
   },
+  necklace: {
+    at: "neck",
+    art: (
+      <g>
+        <path d="M-24 -4C-16 16 16 16 24 -4" fill="none" stroke="#E7C85C" strokeWidth={3.5} />
+        <circle cx={0} cy={14} r={5} fill="#A94C40" strokeWidth={2.5} />
+      </g>
+    ),
+  },
+  choker: { at: "neck", art: <path d="M-30 -6C-14 2 14 2 30 -6" fill="none" stroke="#34312E" strokeWidth={7} /> },
+  hairpin: {
+    at: "head",
+    art: (
+      <g transform="translate(-34 16) rotate(-20)">
+        <rect x={-14} y={-4} width={28} height={8} rx={3} fill="#E7C85C" strokeWidth={2.5} />
+        <circle cx={0} cy={0} r={2.5} fill="#A94C40" strokeWidth={0} stroke="none" />
+      </g>
+    ),
+  },
+  earbuds: {
+    at: "face",
+    art: (
+      <g fill="#FFFBF2" strokeWidth={2.5}>
+        <rect x={-42} y={4} width={8} height={18} rx={4} />
+        <rect x={34} y={4} width={8} height={18} rx={4} />
+      </g>
+    ),
+  },
+  freckles: {
+    at: "face",
+    art: (
+      <g fill="#8A5A3A" stroke="none">
+        {[-34, -28, -22, 22, 28, 34].map((x, index) => <circle key={x} cx={x} cy={12 + (index % 2) * 4} r={1.6} />)}
+      </g>
+    ),
+  },
+  blush: {
+    at: "face",
+    art: (
+      <g fill="#E98C8C" fillOpacity={0.65} stroke="none">
+        <ellipse cx={-30} cy={15} rx={11} ry={6.5} />
+        <ellipse cx={30} cy={15} rx={11} ry={6.5} />
+      </g>
+    ),
+  },
+  starsticker: {
+    at: "face",
+    art: <path d="M-31 8l3 6l7 1l-5 5l1 7l-6-3l-6 3l1-7l-5-5l7-1Z" fill="#E7C85C" strokeWidth={2.5} />,
+  },
+  officerbadge: {
+    at: "neck",
+    art: (
+      <g transform="translate(-34 22)">
+        <path d="M0 -13L12 -7V4C12 10 5 14 0 16C-5 14 -12 10 -12 4V-7Z" fill="#E7C85C" strokeWidth={3} />
+        <text x={0} y={6} fontSize={13} fontWeight={700} textAnchor="middle" fill="#34312E" stroke="none">공</text>
+      </g>
+    ),
+  },
 };

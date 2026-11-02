@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useState, type ReactNode } from "react";
 import { Character } from "@/components/character/Character";
-import { CATEGORIES, DEFAULT_CHARACTER, randomCharacter, type CharacterConfig } from "@/lib/character/catalog";
+import { CATEGORIES, DEFAULT_CHARACTER, isUnlocked, randomCharacter, specialFor, type CharacterConfig } from "@/lib/character/catalog";
 
 type Props = {
   value: CharacterConfig;
@@ -12,9 +12,11 @@ type Props = {
   primaryAction: ReactNode;
   /** 초기화 시 돌아갈 값. 수정 화면에서는 저장돼 있던 모습이다. */
   resetTo?: CharacterConfig;
+  /** 특별 아이템 잠금 해제 기준. 등록 중에는 0이다. */
+  caseCount?: number;
 };
 
-export function CharacterEditor({ value, onChange, primaryAction, resetTo = DEFAULT_CHARACTER }: Props) {
+export function CharacterEditor({ value, onChange, primaryAction, resetTo = DEFAULT_CHARACTER, caseCount = 0 }: Props) {
   const [categoryKey, setCategoryKey] = useState(CATEGORIES[0].key);
   const [shot, setShot] = useState(0);
   const category = CATEGORIES.find((item) => item.key === categoryKey) ?? CATEGORIES[0];
@@ -90,10 +92,10 @@ export function CharacterEditor({ value, onChange, primaryAction, resetTo = DEFA
 
       {/* 아이템 */}
       <div className="lg:order-3">
-        <OptionGrid title={category.label} kind={category.kind} configKey={category.key} options={category.options} value={value} onPick={set} />
+        <OptionGrid title={category.label} kind={category.kind} configKey={category.key} options={category.options} value={value} onPick={set} caseCount={caseCount} />
         {category.swatch && (
           <div className="mt-5">
-            <OptionGrid title={category.swatch.label} kind="color" configKey={category.swatch.key} options={category.swatch.options} value={value} onPick={set} />
+            <OptionGrid title={category.swatch.label} kind="color" configKey={category.swatch.key} options={category.swatch.options} value={value} onPick={set} caseCount={caseCount} />
           </div>
         )}
       </div>
@@ -113,6 +115,7 @@ function OptionGrid({
   options,
   value,
   onPick,
+  caseCount,
 }: {
   title: string;
   kind: "part" | "color";
@@ -120,6 +123,7 @@ function OptionGrid({
   options: readonly { id: string; label: string }[];
   value: CharacterConfig;
   onPick: (key: string, id: string) => void;
+  caseCount: number;
 }) {
   const current = (value as unknown as Record<string, string>)[configKey];
   return (
@@ -128,11 +132,13 @@ function OptionGrid({
       <div className={kind === "color" ? "grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-4" : "grid grid-cols-3 gap-2 sm:grid-cols-4"}>
         {options.map((option) => {
           const selected = current === option.id;
+          const locked = kind === "part" && !isUnlocked(configKey, option.id, caseCount);
           return (
             <button
               key={option.id}
               type="button"
               aria-pressed={selected}
+              disabled={locked}
               onClick={() => onPick(configKey, option.id)}
               className={`relative grid justify-items-center gap-0.5 rounded-[12px_15px_11px_16px] border-[2.5px] border-ink p-1.5 text-center text-[13px] leading-tight ${
                 selected ? "bg-mustard" : "bg-sheet"
@@ -141,9 +147,11 @@ function OptionGrid({
               {kind === "color" ? (
                 <span className="my-1 block size-10 rounded-full border-[2.5px] border-ink" style={{ background: option.id }} />
               ) : (
-                <Character config={{ ...value, [configKey]: option.id } as CharacterConfig} size={76} rough={false} title={option.label} />
+                <span className={locked ? "opacity-35 grayscale" : ""}>
+                  <Character config={{ ...value, [configKey]: option.id } as CharacterConfig} size={76} rough={false} title={option.label} />
+                </span>
               )}
-              <span className="font-official">{option.label}</span>
+              <span className="font-official">{locked ? `민원 ${specialFor(configKey, option.id)?.needCases}건` : option.label}</span>
               {selected && (
                 <span className="thud absolute -top-2 -right-1 rounded-full border-2 border-brick bg-sheet px-1.5 font-display text-[11px] text-brick">
                   선택

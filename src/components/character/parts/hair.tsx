@@ -17,6 +17,24 @@ export const HAIR_BACK: Partial<Record<HairId, ReactNode>> = {
       <circle cx={56} cy={52} r={18} />
     </g>
   ),
+  get ponytail() { return BACK_MORE.ponytail; },
+  get bun() { return BACK_MORE.bun; },
+  get wave() { return BACK_MORE.wave; },
+  get twinbun() { return BACK_MORE.twinbun; },
+  get mullet() { return BACK_MORE.mullet; },
+};
+
+const BACK_MORE: Partial<Record<HairId, ReactNode>> = {
+  ponytail: <path d="M46 16C84 8 96 44 86 80C80 100 66 108 62 96C60 74 64 50 44 34Z" />,
+  bun: <circle cx={0} cy={-20} r={20} />,
+  wave: <path d="M-58 26C-76 56 -62 76 -74 100C-80 124 -60 138 -44 128C-20 134 20 134 44 128C60 138 80 124 74 100C62 76 76 56 58 26C44 -8 -44 -8 -58 26Z" />,
+  twinbun: (
+    <g>
+      <circle cx={-44} cy={-10} r={18} />
+      <circle cx={44} cy={-10} r={18} />
+    </g>
+  ),
+  mullet: <path d="M-56 30C-62 62 -74 92 -60 118C-48 106 -44 112 -36 120C-20 124 20 124 36 120C44 112 48 106 60 118C74 92 62 62 56 30C44 -6 -44 -6 -56 30Z" />,
 };
 
 export const HAIR_FRONT: Record<HairId, ReactNode> = {
@@ -46,7 +64,15 @@ export const HAIR_FRONT: Record<HairId, ReactNode> = {
       <path d="M0 -20C6 -32 22 -34 28 -28C24 -18 10 -14 0 -20Z" />
     </g>
   ),
+  ponytail: <path d="M-54 44C-58 6 -28 -9 0 -9C28 -9 58 6 54 40C36 30 14 20 -6 12C-26 22 -44 30 -54 44Z" />,
+  bangs: <path d="M-56 44C-60 4 -30 -9 0 -9C30 -9 60 4 56 44C48 40 40 42 28 40C14 44 -14 44 -28 40C-40 42 -48 40 -56 44Z" />,
+  bun: <path d="M-54 40C-58 4 -28 -9 0 -9C28 -9 58 4 54 40C40 22 18 14 0 12C-18 14 -40 22 -54 40Z" />,
+  wave: <path d="M-58 48C-62 8 -30 -9 0 -9C30 -9 62 8 58 48C50 30 38 26 26 16C8 26 -20 22 -34 26C-44 30 -52 38 -58 48Z" />,
+  short: <path d="M-56 38C-60 2 -30 -10 0 -10C30 -10 60 2 56 38C52 30 48 26 40 24C20 18 -12 18 -34 24C-44 26 -52 30 -56 38Z" />,
+  sidepart: <path d="M-54 44C-60 8 -34 -9 -6 -9C28 -10 58 6 54 44C48 26 30 14 -18 10C-30 18 -46 28 -54 44Z" />,
+  twinbun: <path d="M-54 40C-58 4 -28 -9 0 -9C28 -9 58 4 54 40C42 26 16 18 0 8C-16 18 -42 26 -54 40Z" />,
+  mullet: <path d="M-56 44L-60 22C-58 -2 -30 -12 0 -10C30 -12 58 -2 60 22L56 44L46 28L36 36L24 26L10 34L-4 24L-18 34L-32 26L-44 36Z" />,
 };
 
 /** 모자를 쓰면 머리 윗부분이 모자 안에 들어가므로, 뾰족한 머리는 가린다. */
-export const HAIR_HIDDEN_BY_HAT: readonly HairId[] = ["sprout"];
+export const HAIR_HIDDEN_BY_HAT: readonly HairId[] = ["sprout", "bun", "twinbun"];

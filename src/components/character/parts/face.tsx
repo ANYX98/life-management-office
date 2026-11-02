@@ -34,6 +34,33 @@ export const EYE_ART: Record<EyesId, ReactNode> = {
   dazed: both((x) => (
     <path key={x} d={`M${x} 0c2-3 6 0 4 4c-3 5-12 2-11-5c1-8 15-9 17 1`} fill="none" strokeWidth={3} />
   )),
+  sparkle: both((x) => (
+    <g key={x}>
+      <circle cx={x} cy={0} r={9} fill={INK} stroke="none" />
+      <circle cx={x + 3} cy={-3} r={3.2} fill="#fff" stroke="none" />
+      <circle cx={x - 3} cy={3} r={1.8} fill="#fff" stroke="none" />
+    </g>
+  )),
+  wink: (
+    <>
+      <ellipse cx={-20} cy={0} rx={4.5} ry={5.5} fill={INK} stroke="none" />
+      <path d="M12 2L27 -3M12 2L27 7" fill="none" />
+    </>
+  ),
+  smiling: both((x) => <path key={x} d={`M${x - 9} 3C${x - 5} -5 ${x + 5} -5 ${x + 9} 3`} fill="none" />),
+  lashes: both((x) => (
+    <g key={x}>
+      <ellipse cx={x} cy={1} rx={5.5} ry={6.5} fill={INK} stroke="none" />
+      <path d={`M${x - 8} -5C${x - 4} -9 ${x + 4} -9 ${x + 8} -5M${x + (x < 0 ? -8 : 8)} -5L${x + (x < 0 ? -12 : 12)} -9`} fill="none" strokeWidth={3} />
+    </g>
+  )),
+  cat: both((x) => (
+    <g key={x}>
+      <path d={`M${x - 9} 1C${x - 4} -6 ${x + 4} -6 ${x + 9} 1C${x + 4} 6 ${x - 4} 6 ${x - 9} 1Z`} fill="#F4E3A1" strokeWidth={3} />
+      <ellipse cx={x} cy={0} rx={1.8} ry={4.5} fill={INK} stroke="none" />
+    </g>
+  )),
+  heart: both((x) => <path key={x} d={`M${x} 7C${x - 12} -1 ${x - 7} -9 ${x} -3C${x + 7} -9 ${x + 12} -1 ${x} 7Z`} fill="#A94C40" strokeWidth={2.5} />),
 };
 
 export const MOUTH_ART: Record<MouthId, ReactNode> = {
@@ -48,6 +75,16 @@ export const MOUTH_ART: Record<MouthId, ReactNode> = {
       <path d="M-5 18V31M4 18V31" fill="none" strokeWidth={2.5} />
     </g>
   ),
+  cat: <path d="M-10 24C-7 30 -2 30 0 24C2 30 7 30 10 24" fill="none" />,
+  tongue: (
+    <g>
+      <path d="M-9 23H9" fill="none" />
+      <path d="M-3 24V30C-3 35 5 35 5 30V24Z" fill="#E98C8C" strokeWidth={3} />
+    </g>
+  ),
+  pout: <path d="M-5 22C-1 25 -1 26 -4 28C0 30 1 31 -4 33" fill="none" strokeWidth={3.5} />,
+  lips: <path d="M-10 25C-5 19 -2 21 0 22C2 21 5 19 10 25C5 32 -5 32 -10 25Z" fill="#A94C40" strokeWidth={3} />,
+  tiny: <path d="M-3 24C-1 27 1 27 3 24" fill="none" strokeWidth={3.5} />,
 };
 
 const lensBoth = (draw: (x: number) => ReactNode, bridge: string) => (
@@ -71,5 +108,17 @@ export const GLASSES_ART: Record<GlassesId, ReactNode> = {
   half: lensBoth(
     (x) => <path key={x} d={`M${x - 14} 0H${x + 14}C${x + 13} 15 ${x - 13} 15 ${x - 14} 0Z`} fill="#FFFBF2" fillOpacity={0.3} />,
     "M-6 1H6",
+  ),
+  heart: lensBoth(
+    (x) => <path key={x} d={`M${x} 14C${x - 20} 1 ${x - 12} -13 ${x} -4C${x + 12} -13 ${x + 20} 1 ${x} 14Z`} fill="#E9A9B8" fillOpacity={0.55} />,
+    "M-7 -3H7",
+  ),
+  star: lensBoth(
+    (x) => <path key={x} d={`M${x} -15L${x + 5} -5L${x + 16} -3L${x + 8} 5L${x + 10} 15L${x} 10L${x - 10} 15L${x - 8} 5L${x - 16} -3L${x - 5} -5Z`} fill="#E7C85C" fillOpacity={0.6} />,
+    "M-5 -2H5",
+  ),
+  rimless: lensBoth(
+    (x) => <ellipse key={x} cx={x} cy={0} rx={14} ry={11} fill="#FFFBF2" fillOpacity={0.35} strokeWidth={2} />,
+    "M-6 -1H6",
   ),
 };

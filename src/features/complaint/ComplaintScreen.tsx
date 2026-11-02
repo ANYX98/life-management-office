@@ -197,7 +197,7 @@ function ResultView({ result, onAgain }: { result: { record: CaseRecord; citizen
       </div>}
       <div className="flex flex-wrap justify-center gap-3">
         <Link href="/records" className="btn btn-primary">내 기록 보기</Link>
-        <Link href="/card" className="btn">시민증 보기</Link>
+        <Link href="/locker" className="btn">사물함 열기</Link>
         <button type="button" className="btn" onClick={onAgain}>민원 하나 더</button>
       </div>
       {!gentle && <CaseShareActions record={record} citizen={citizen} />}
