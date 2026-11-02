@@ -109,9 +109,18 @@ export function RegisterFlow() {
                 />
                 {nicknameError && <p id="nickname-error" role="alert" className="mt-1 text-sm font-bold text-brick">{nicknameError}</p>}
               </div>
+              <div className="rounded-md border-2 border-dashed border-ink/40 p-3 text-sm">
+                <p className="font-bold">시작 전에 확인해 주세요</p>
+                <ul className="m-0 mt-1 grid gap-1 pl-4">
+                  <li>쓴 글은 서버에 저장되고, '나만 보기' 글도 운영자는 볼 수 있습니다.</li>
+                  <li>'익명 공개'로 낸 글은 다른 시민이 봅니다. 실명과 연락처는 적지 마세요.</li>
+                  <li>이 서비스는 게임이며 상담이나 치료를 대신하지 않습니다. 많이 힘들 때는 109(24시간)에 전화하세요.</li>
+                  <li>내 기록은 언제든 직접 삭제할 수 있습니다.</li>
+                </ul>
+              </div>
               <label className="flex items-start gap-2 text-sm">
                 <input id="agree" type="checkbox" className="mt-1.5" checked={agreed} onChange={(event) => { setAgreed(event.target.checked); setNicknameError(null); }} />
-                <span>만 14세 이상이며, <Link href="/privacy" target="_blank" className="text-brick">개인정보 안내</Link>를 확인했습니다.</span>
+                <span>만 14세 이상이며, 위 내용과 <Link href="/privacy" target="_blank" className="text-brick">개인정보 안내</Link>에 동의합니다.</span>
               </label>
               <button type="submit" className="btn btn-primary">다음: 캐릭터 만들기</button>
             </form>
