@@ -101,7 +101,7 @@ export function ComplaintScreen() {
       <div className="flex items-end gap-2">
         <Mascot size={88} pose="document" />
         <p className="bubble flex-1 text-[17px]" style={{ ["--tail-x" as string]: "-4px" }}>
-          번호 부르면 오세요. 어차피 시민님 한 분입니다. 무슨 얘기든 받습니다. 대충 적으셔도 대충 처리합니다.
+          대충 적으십시오. 대충 처리합니다.
         </p>
       </div>
       <h1 className="text-[28px]">민원 접수실</h1>

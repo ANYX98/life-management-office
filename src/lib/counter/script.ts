@@ -23,9 +23,9 @@ export type CounterNode = {
 export const COUNTER_START = "start";
 
 export const COUNTER_OPENERS: readonly string[] = [
-  "번호표 받았습니다. 오늘은 왜 오셨습니까?",
-  "다음 분 오세요. 한 분밖에 안 계시지만요. 무슨 일이십니까?",
-  "점심시간이지만 귀찮아서 그냥 받겠습니다. 무슨 일이십니까?",
+  "네, 왜 오셨습니까?",
+  "다음 분 오세요. 한 분이시군요. 무슨 일이십니까?",
+  "점심시간이지만 받겠습니다. 무슨 일이십니까?",
 ];
 
 export const COUNTER_SCRIPT: Record<string, CounterNode> = {
@@ -44,7 +44,7 @@ export const COUNTER_SCRIPT: Record<string, CounterNode> = {
   },
 
   just: {
-    line: "그냥 오셨군요. 그런 민원 양식은 없는데, 저도 그냥 앉아 있으니 접수합니다.",
+    line: "그냥 오셨군요. 아 그러세요. 저도 그냥 앉아 있습니다.",
     expression: "blink",
     options: [
       { label: "과장님은 왜 여기 계세요?", next: "just_why" },
@@ -52,19 +52,19 @@ export const COUNTER_SCRIPT: Record<string, CounterNode> = {
     ],
   },
   just_why: {
-    line: "밭에서 뽑혀 왔습니다. 면접 본 기억은 없습니다. 어찌저찌 과장까지 왔습니다.",
+    line: "밭에서 뽑혀 왔습니다. 면접은 안 봤습니다.",
     expression: "deadpan",
     options: [
       { label: "그게 되는 거예요?", next: "just_works" },
       { label: "대단하시네요", next: "just_great" },
     ],
   },
-  just_works: { line: "됐으니 제가 여기 있지요. 저도 왜 되는지는 모릅니다. 살펴 가십시오.", expression: "proud", options: [], exit: "plaza" },
-  just_great: { line: "아닙니다. 그냥 안 썩었을 뿐입니다. 살펴 가십시오.", expression: "proud", options: [], exit: "plaza" },
-  just_bye: { line: "네. 오셨다 가신 걸로 처리합니다. 서류는 없습니다.", expression: "blink", pose: "stamp", options: [], exit: "plaza" },
+  just_works: { line: "됐으니 여기 있습니다. 저도 모릅니다.", expression: "proud", options: [], exit: "plaza" },
+  just_great: { line: "아닙니다. 안 썩었을 뿐입니다.", expression: "proud", options: [], exit: "plaza" },
+  just_bye: { line: "네. 살펴 가십시오. 서류는 없습니다.", expression: "blink", pose: "stamp", options: [], exit: "plaza" },
 
   compare: {
-    line: "남들 인생 서류를 저희도 갖고 있습니다. 보여 드릴 순 없지만, 다들 침대 사건이 한 건씩은 있습니다.",
+    line: "남들이요. 네. 그 사람들도 침대 사건이 한 건씩은 있습니다.",
     expression: "deadpan",
     pose: "document",
     options: [
@@ -73,19 +73,19 @@ export const COUNTER_SCRIPT: Record<string, CounterNode> = {
     ],
   },
   compare_behind: {
-    line: "뒤처졌다는 건 줄이 있어야 성립합니다. 공단이 찾아봤는데 인생 대기 줄은 등록된 적이 없습니다. 번호표는 제가 방금 임의로 드린 겁니다.",
+    line: "인생 대기 줄은 등록된 적이 없습니다. 번호표는 제가 방금 임의로 드린 겁니다.",
     expression: "worried",
     options: [{ label: "그래도 신경 쓰여요", next: "compare_end" }],
   },
   compare_really: {
-    line: "사진은 잘 나온 것만 제출하니까요. 공단 증명사진도 세 번 찍은 겁니다. 저는 이게 제일 잘 나온 겁니다.",
+    line: "사진은 잘 나온 것만 내니까요. 제 증명사진도 세 번 찍었습니다.",
     expression: "proud",
     options: [{ label: "그러네요", next: "compare_end" }],
   },
-  compare_end: { line: "신경 쓰이는 건 공단이 막을 권한이 없습니다. 그것도 민원으로 넣으시면 도장은 찍어 드립니다.", expression: "deadpan", pose: "stamp", options: [], exit: "complaint" },
+  compare_end: { line: "그건 공단이 못 막습니다. 민원으로 내시면 태워는 드립니다.", expression: "deadpan", pose: "stamp", options: [], exit: "complaint" },
 
   nothing: {
-    line: "접수했습니다. 어느 정도로 하기 싫으십니까?",
+    line: "네. 어느 정도로요?",
     expression: "deadpan",
     pose: "document",
     options: [
@@ -93,20 +93,20 @@ export const COUNTER_SCRIPT: Record<string, CounterNode> = {
       { label: "그냥 다요", next: "nothing_all" },
     ],
   },
-  nothing_today: { line: "그럼 오늘 할 일을 내일로 도장 찍어 드립니다. 내일도 싫으면 내일 오십시오. 도장은 많습니다.", expression: "blink", pose: "stamp", options: [], exit: "complaint" },
+  nothing_today: { line: "오늘 할 일은 창고에서 태웠습니다. 없는 걸로 합시다.", expression: "blink", pose: "stamp", options: [], exit: "complaint" },
   nothing_all: {
-    line: "다요. 그렇군요. 그럼 오늘의 업무를 하나로 줄이겠습니다. 뭐든 먹는 겁니다. 나머지는 제가 못 본 걸로 합니다.",
+    line: "그렇군요. 오늘 업무는 하나만 남기겠습니다. 뭐든 먹기.",
     expression: "worried",
     options: [
       { label: "그것도 귀찮아요", next: "nothing_lazy" },
       { label: "알겠어요", next: "nothing_ok" },
     ],
   },
-  nothing_lazy: { line: "그럼 물로 합의합니다. 더는 못 깎아 드립니다. 저희도 규정이 있습니다. 방금 만들었지만요.", expression: "deadpan", pose: "stamp", options: [], exit: "plaza" },
-  nothing_ok: { line: "처리됐습니다. 이행 여부는 확인하지 않습니다.", expression: "blink", pose: "stamp", options: [], exit: "plaza" },
+  nothing_lazy: { line: "그럼 물로 합의합니다. 더는 못 깎아 드립니다.", expression: "deadpan", pose: "stamp", options: [], exit: "plaza" },
+  nothing_ok: { line: "네. 확인은 안 합니다.", expression: "blink", pose: "stamp", options: [], exit: "plaza" },
 
   future: {
-    line: "앞날 말씀이시군요. 어느 쪽 서류로 드릴까요?",
+    line: "앞날이요. 어느 쪽입니까?",
     expression: "deadpan",
     pose: "document",
     options: [
@@ -115,19 +115,19 @@ export const COUNTER_SCRIPT: Record<string, CounterNode> = {
     ],
   },
   future_job: {
-    line: "그 건은 회사 쪽 창구 소관입니다. 그쪽 창구는 답도 잘 안 합니다. 저희는 답은 합니다. 도움은 안 됩니다.",
+    line: "그건 회사 쪽 창구입니다. 거기는 답도 안 합니다. 저희는 답은 합니다.",
     expression: "worried",
     options: [{ label: "그럼 어떡해요", next: "future_end" }],
   },
   future_all: {
-    line: "5년 뒤 서류를 찾아봤는데 아직 안 왔습니다. 오면 그때 처리하겠습니다. 미리 처리한 적은 공단 역사에 없습니다.",
+    line: "5년 뒤 서류는 아직 안 왔습니다. 오면 그때 보겠습니다.",
     expression: "deadpan",
     options: [{ label: "그럼 어떡해요", next: "future_end" }],
   },
-  future_end: { line: "오늘 분량만 하십시오. 오늘 분량이 뭔지는 귀하가 정하십시오. 작게 정하셔도 저는 모릅니다.", expression: "blink", pose: "stamp", options: [], exit: "complaint" },
+  future_end: { line: "오늘 분량만 하십시오. 분량은 귀하가 정하십시오. 작아도 저는 모릅니다.", expression: "blink", pose: "stamp", options: [], exit: "complaint" },
 
   lonely: {
-    line: "등록부를 봤습니다. 귀하 칸 있습니다. 비어 있지 않습니다. 제가 방금 봤으니 목격자도 있습니다.",
+    line: "등록부 봤습니다. 귀하 칸 있습니다. 제가 방금 봤으니 목격자도 있습니다.",
     expression: "deadpan",
     pose: "document",
     options: [
@@ -136,16 +136,16 @@ export const COUNTER_SCRIPT: Record<string, CounterNode> = {
     ],
   },
   lonely_what: {
-    line: "별거 아닙니다. 다만 저는 감자라서 이 건은 처리 권한이 모자랍니다. 사람 쪽 업무입니다.",
+    line: "별거 아닙니다. 다만 저는 감자라서 이 건은 사람 쪽 업무입니다.",
     expression: "worried",
     options: [{ label: "사람 쪽이요?", next: "lonely_order" }],
   },
   lonely_none: {
-    line: "연락이 뜸했던 사람은 대개 상대방도 뜸했습니다. 양쪽 다 먼저 할 말이 없어서요. 공단에 비슷한 서류가 많습니다.",
+    line: "뜸했던 사람은 대개 상대방도 뜸합니다. 먼저 할 말이 없어서요.",
     expression: "worried",
     options: [{ label: "뭐라고 보내요", next: "lonely_order" }],
   },
-  lonely_order: { line: "업무 지시입니다. 누구 한 명에게 '밥 먹었냐' 보내십시오. 답이 안 오면 상대방 소관입니다. 귀하 잘못으로 접수하지 않습니다.", expression: "deadpan", pose: "stamp", options: [], exit: "plaza" },
+  lonely_order: { line: "업무 지시입니다. 아무나 한 명에게 '밥 먹었냐' 보내십시오. 답 안 오면 그쪽 소관입니다.", expression: "deadpan", pose: "stamp", options: [], exit: "plaza" },
 
   serious: {
     line: "잠깐만요. 이 건은 도장 안 찍겠습니다. 농담도 잠시 내려놓겠습니다. 혹시 죽고 싶다는 생각까지 드십니까?",
