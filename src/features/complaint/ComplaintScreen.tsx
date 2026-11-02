@@ -8,12 +8,14 @@ import { ErrorNote, LoadingNote, NeedRegistration } from "@/components/ui/StateN
 import { citizenRepository } from "@/lib/citizen/repository";
 import type { CaseRecord, CaseVisibility, Citizen } from "@/lib/citizen/types";
 import { notifyCitizenChanged, useCitizen } from "@/lib/citizen/useCitizen";
-import { CATEGORIES, ENERGY_LEVELS, SOCIAL_STATES, USELESS_ACTS, type CategoryId } from "@/lib/complaint/content";
+import { CATEGORIES, ENERGY_LEVELS, SOCIAL_STATES, STATEMENT_PROMPTS, USELESS_ACTS, type CategoryId } from "@/lib/complaint/content";
+import { dailyIndex, useToday } from "@/lib/daily/today";
 import { looksLikeSeriousDistress, validateStatement } from "@/lib/complaint/generate";
 import { CaseSheet } from "./CaseSheet";
 
 export function ComplaintScreen() {
   const { state, reload } = useCitizen();
+  const today = useToday();
   const [category, setCategory] = useState<CategoryId | null>(null);
   const [energy, setEnergy] = useState(2);
   const [uselessAct, setUselessAct] = useState<string | null>(null);
@@ -57,8 +59,9 @@ export function ComplaintScreen() {
   if (result) return <ResultView result={result} onAgain={reset} />;
 
   const submit = async () => {
-    if (!category) {
-      setProblem("오늘 무슨 일이 있었는지 하나만 골라 주세요. 나머지는 대충 넘겨도 됩니다.");
+    const resolvedCategory: CategoryId | null = category ?? (statement.trim() ? "free" : null);
+    if (!resolvedCategory) {
+      setProblem("아무 얘기나 적거나, 아래에서 하나만 골라 주세요. 나머지는 대충 넘겨도 됩니다.");
       return;
     }
     if (looksLikeSeriousDistress(statement)) {
@@ -75,7 +78,7 @@ export function ComplaintScreen() {
     setSubmitting(true);
     try {
       const previousCount = state.citizen.caseCount;
-      const { record, citizen } = await citizenRepository.submitCase({ category, energy, uselessAct, socialState, statement, visibility });
+      const { record, citizen } = await citizenRepository.submitCase({ category: resolvedCategory, energy, uselessAct, socialState, statement, visibility });
       setResult({ record, citizen, previousCount });
       notifyCitizenChanged();
       window.scrollTo(0, 0);
@@ -97,28 +100,29 @@ export function ComplaintScreen() {
       <div className="flex items-end gap-2">
         <Mascot size={88} pose="document" />
         <p className="bubble flex-1 text-[17px]" style={{ ["--tail-x" as string]: "-4px" }}>
-          번호 부르면 오세요. 어차피 시민님 한 분입니다. 대충 적으셔도 대충 처리합니다.
+          번호 부르면 오세요. 어차피 시민님 한 분입니다. 무슨 얘기든 받습니다. 대충 적으셔도 대충 처리합니다.
         </p>
       </div>
       <h1 className="text-[28px]">민원 접수실</h1>
 
-      <ChipGroup legend="오늘 무슨 일이 있었나요?" options={CATEGORIES.map((item) => ({ value: item.id, label: item.label }))} value={category} onChange={(value) => { setCategory(value as CategoryId); setProblem(null); }} columns />
+      <div>
+        <label htmlFor="statement" className="font-display text-lg">{today ? STATEMENT_PROMPTS[dailyIndex(today, "prompt", STATEMENT_PROMPTS.length)] : "오늘 무슨 일 있었어요?"}</label>
+        <textarea
+          id="statement"
+          className="paper mt-2 block min-h-32 w-full p-3 text-base"
+          maxLength={200}
+          value={statement}
+          placeholder="뭐든 적어 주세요. 길어도, 짧아도, 황당한 일이 아니어도 됩니다."
+          onChange={(event) => { setStatement(event.target.value); setProblem(null); }}
+        />
+        <p className="mt-1 text-right text-sm text-ink-soft">{statement.length} / 200자. 실명과 연락처는 빼 주세요.</p>
+      </div>
+
+      <p className="font-display text-ink-soft">쓰기 귀찮으면 아래에서 골라도 됩니다. 전부 건너뛰어도 되고요.</p>
+      <ChipGroup legend="어떤 쪽에 가깝나요?" options={CATEGORIES.filter((item) => item.id !== "free").map((item) => ({ value: item.id, label: item.label }))} value={category} onChange={(value) => { setCategory(value as CategoryId | null); setProblem(null); }} columns allowClear />
       <ChipGroup legend="오늘의 에너지 잔량은?" options={ENERGY_LEVELS.map((item) => ({ value: String(item.value), label: item.label }))} value={String(energy)} onChange={(value) => setEnergy(Number(value))} />
       <ChipGroup legend="오늘 가장 쓸데없었던 행동은? (건너뛰어도 됨)" options={USELESS_ACTS.map((item) => ({ value: item, label: item }))} value={uselessAct} onChange={setUselessAct} allowClear />
       <ChipGroup legend="오늘의 사회생활 상태는? (건너뛰어도 됨)" options={SOCIAL_STATES.map((item) => ({ value: item, label: item }))} value={socialState} onChange={setSocialState} allowClear />
-
-      <div>
-        <label htmlFor="statement" className="font-display text-lg">오늘 가장 황당했던 순간은? (건너뛰어도 됨)</label>
-        <textarea
-          id="statement"
-          className="paper mt-2 block min-h-24 w-full p-3 text-base"
-          maxLength={60}
-          value={statement}
-          placeholder="예: 지하철 반대로 타고 세 정거장 감"
-          onChange={(event) => { setStatement(event.target.value); setProblem(null); }}
-        />
-        <p className="mt-1 text-right text-sm text-ink-soft">{statement.length} / 60자. 실명과 연락처는 빼 주세요.</p>
-      </div>
 
       <fieldset className="m-0 border-0 p-0">
         <legend className="p-0 font-display text-lg">사건을 공개할까요?</legend>
@@ -129,7 +133,7 @@ export function ComplaintScreen() {
           </label>
           <label className={`paper flex cursor-pointer gap-2 p-3 ${visibility === "public" ? "bg-mustard" : ""}`}>
             <input type="radio" name="visibility" checked={visibility === "public"} onChange={() => setVisibility("public")} />
-            <span><span className="block font-display">익명 공개</span><span className="text-sm">사건기록실에 닉네임과 캐릭터로 표시되고, 황당했던 순간도 함께 보입니다. 나중에 내 기록에서 비공개로 바꿀 수 있어요.</span></span>
+            <span><span className="block font-display">익명 공개</span><span className="text-sm">사건기록실에 닉네임과 캐릭터로 표시되고, 적은 내용도 함께 보입니다. 나중에 내 기록에서 비공개로 바꿀 수 있어요.</span></span>
           </label>
         </div>
       </fieldset>
