@@ -272,6 +272,17 @@ export const supabaseRepository: CitizenRepository = {
       throw failure("로그인");
     }
   },
+  async getPublicCase(id) {
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+    const { data, error } = await getSupabase().rpc("public_case", { p_id: id });
+    if (error) throw failure("사건 불러오기");
+    const row = (data as PublicCaseRow[])[0];
+    return row ? toPublicCase(row) : null;
+  },
+  async recordShareEvent(kind, caseId) {
+    // 집계 실패가 화면을 막지 않게 오류는 무시한다.
+    await getSupabase().rpc("record_share_event", { p_kind: kind, p_case_id: caseId });
+  },
   async deleteMyAccount() {
     const supabase = getSupabase();
     const { error } = await supabase.rpc("delete_my_account");

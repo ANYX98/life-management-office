@@ -15,6 +15,8 @@ import { citizenRepository } from "@/lib/citizen/repository";
 import { validateNickname, type Citizen } from "@/lib/citizen/types";
 import { notifyCitizenChanged, useCitizen } from "@/lib/citizen/useCitizen";
 import { PHOTO_REMARKS } from "@/lib/daily/content";
+import { SHARE_REF_KEY } from "@/lib/share/ref";
+import { readJson, removeKey } from "@/lib/storage";
 
 const STEPS = ["닉네임", "캐릭터", "확인", "시민증", "입장"] as const;
 
@@ -52,6 +54,11 @@ export function RegisterFlow() {
     setIssueError(null);
     try {
       setIssued(await citizenRepository.register({ nickname, character, captchaToken }));
+      const shareRef = readJson<string>(SHARE_REF_KEY);
+      if (shareRef) {
+        removeKey(SHARE_REF_KEY);
+        void citizenRepository.recordShareEvent("signup", shareRef).catch(() => undefined);
+      }
       setStep(3);
       notifyCitizenChanged();
     } catch (cause) {

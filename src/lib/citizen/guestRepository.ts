@@ -118,6 +118,12 @@ export const guestRepository: CitizenRepository = {
   async loginWithPassword() {
     throw new Error("서버가 연결되지 않아 로그인할 수 없습니다.");
   },
+  async getPublicCase() {
+    return null;
+  },
+  async recordShareEvent() {
+    /* 게스트 모드에는 집계할 곳이 없다. */
+  },
   async deleteMyAccount() {
     removeKey(KEY);
     removeKey(CASES_KEY);

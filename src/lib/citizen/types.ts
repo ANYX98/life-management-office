@@ -89,6 +89,8 @@ export interface CitizenRepository {
   setPassword(password: string): Promise<void>;
   loginWithPassword(email: string, password: string, captchaToken?: string | null): Promise<void>;
   deleteMyAccount(): Promise<void>;
+  getPublicCase(id: string): Promise<PublicCase | null>;
+  recordShareEvent(kind: "visit" | "signup", caseId: string): Promise<void>;
 }
 
 /** supabase/migrations의 random_citizen_type()과 같은 목록을 유지한다. */

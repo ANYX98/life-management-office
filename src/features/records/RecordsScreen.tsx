@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ErrorNote, LoadingNote, NeedRegistration } from "@/components/ui/StateNotes";
 import { CaseSheet } from "@/features/complaint/CaseSheet";
+import { CaseShareActions } from "@/features/share/CaseShareActions";
 import { citizenRepository } from "@/lib/citizen/repository";
 import { REACTIONS, type ReactionCounts } from "@/lib/archive/reactions";
 import type { CaseRecord } from "@/lib/citizen/types";
@@ -101,6 +102,7 @@ export function RecordsScreen() {
                       다른 시민의 반응: {REACTIONS.filter((reaction) => counts[item.id]?.[reaction.id]).map((reaction) => `${reaction.label} ${counts[item.id]?.[reaction.id]}`).join(", ")}
                     </p>
                   )}
+                  <CaseShareActions record={item} citizen={state.citizen} />
                   {visibilityError && <p role="alert" className="font-bold text-brick">{visibilityError}</p>}
                   <div className="flex flex-wrap justify-end gap-2">
                     {citizenRepository.socialEnabled && (
@@ -127,7 +129,7 @@ export function RecordsScreen() {
         ))}
       </section>
 
-      <p className="text-center text-sm text-ink-soft">스티커, 특별 처분서, 주간 인생 보고서는 아직 공사 중입니다.</p>
+      <p className="text-center text-sm text-ink-soft">스티커와 주간 인생 보고서는 아직 공사 중입니다.</p>
     </div>
   );
 }

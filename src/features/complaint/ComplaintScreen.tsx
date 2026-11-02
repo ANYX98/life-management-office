@@ -12,6 +12,7 @@ import { CATEGORIES, ENERGY_LEVELS, SOCIAL_STATES, STATEMENT_PROMPTS, USELESS_AC
 import { dailyIndex, useToday } from "@/lib/daily/today";
 import { GENTLE_RULE, matchStatement } from "@/lib/complaint/rules";
 import { looksLikeSeriousDistress, validateStatement } from "@/lib/complaint/generate";
+import { CaseShareActions } from "@/features/share/CaseShareActions";
 import { CaseSheet } from "./CaseSheet";
 
 export function ComplaintScreen() {
@@ -199,7 +200,7 @@ function ResultView({ result, onAgain }: { result: { record: CaseRecord; citizen
         <Link href="/card" className="btn">시민증 보기</Link>
         <button type="button" className="btn" onClick={onAgain}>민원 하나 더</button>
       </div>
-      <p className="text-center text-sm text-ink-soft">처분서 이미지 저장과 공유는 5단계에서 열립니다.</p>
+      {!gentle && <CaseShareActions record={record} citizen={citizen} />}
     </div>
   );
 }
