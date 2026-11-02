@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ErrorNote, LoadingNote, NeedRegistration } from "@/components/ui/StateNotes";
 import { CaseSheet } from "@/features/complaint/CaseSheet";
 import { citizenRepository } from "@/lib/citizen/repository";
+import { REACTIONS, type ReactionCounts } from "@/lib/archive/reactions";
 import type { CaseRecord } from "@/lib/citizen/types";
 import { useCitizen } from "@/lib/citizen/useCitizen";
 import { formatKstDate } from "@/lib/daily/date";
@@ -15,13 +16,19 @@ export function RecordsScreen() {
   const { state, reload } = useCitizen();
   const [load, setLoad] = useState<Load>({ status: "loading" });
   const [openId, setOpenId] = useState<string | null>(null);
+  const [counts, setCounts] = useState<Record<string, ReactionCounts>>({});
+  const [changing, setChanging] = useState(false);
+  const [visibilityError, setVisibilityError] = useState<string | null>(null);
   const ready = state.status === "ready";
 
   const fetchCases = () => {
     setLoad({ status: "loading" });
     citizenRepository
       .listCases()
-      .then((cases) => setLoad({ status: "ready", cases }))
+      .then((cases) => {
+        setLoad({ status: "ready", cases });
+        citizenRepository.reactionCounts(cases.map((item) => item.id)).then(setCounts).catch(() => setCounts({}));
+      })
       .catch((cause) => setLoad({ status: "error", message: cause instanceof Error ? cause.message : "기록을 불러오지 못했습니다." }));
   };
 
@@ -36,6 +43,20 @@ export function RecordsScreen() {
   if (load.status === "error") return <ErrorNote message={load.message} onRetry={fetchCases} />;
 
   const { cases } = load;
+
+  const toggleVisibility = async (item: CaseRecord) => {
+    const next = item.visibility === "public" ? "private" : "public";
+    setChanging(true);
+    setVisibilityError(null);
+    try {
+      await citizenRepository.setCaseVisibility(item.id, next);
+      setLoad({ status: "ready", cases: cases.map((row) => (row.id === item.id ? { ...row, visibility: next } : row)) });
+    } catch (cause) {
+      setVisibilityError(cause instanceof Error ? cause.message : "공개 범위를 바꾸지 못했습니다.");
+    } finally {
+      setChanging(false);
+    }
+  };
   const titles = [...new Set(cases.map((item) => item.awardedTitle).filter((title): title is string => Boolean(title)))];
   const groups = new Map<string, CaseRecord[]>();
   for (const item of cases) {
@@ -75,7 +96,20 @@ export function RecordsScreen() {
               openId === item.id ? (
                 <div key={item.id} className="grid gap-2">
                   <CaseSheet record={item} />
-                  <button type="button" className="btn justify-self-end" onClick={() => setOpenId(null)}>접기</button>
+                  {REACTIONS.some((reaction) => counts[item.id]?.[reaction.id]) && (
+                    <p className="text-sm">
+                      다른 시민의 반응: {REACTIONS.filter((reaction) => counts[item.id]?.[reaction.id]).map((reaction) => `${reaction.label} ${counts[item.id]?.[reaction.id]}`).join(", ")}
+                    </p>
+                  )}
+                  {visibilityError && <p role="alert" className="font-bold text-brick">{visibilityError}</p>}
+                  <div className="flex flex-wrap justify-end gap-2">
+                    {citizenRepository.socialEnabled && (
+                      <button type="button" className="btn" disabled={changing} onClick={() => toggleVisibility(item)}>
+                        {item.visibility === "public" ? "비공개로 바꾸기" : "익명 공개로 바꾸기"}
+                      </button>
+                    )}
+                    <button type="button" className="btn" onClick={() => setOpenId(null)}>접기</button>
+                  </div>
                 </div>
               ) : (
                 <button

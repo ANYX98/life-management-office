@@ -129,7 +129,7 @@ export function ComplaintScreen() {
           </label>
           <label className={`paper flex cursor-pointer gap-2 p-3 ${visibility === "public" ? "bg-mustard" : ""}`}>
             <input type="radio" name="visibility" checked={visibility === "public"} onChange={() => setVisibility("public")} />
-            <span><span className="block font-display">익명 공개</span><span className="text-sm">시민 사건기록실이 열리면 닉네임과 캐릭터로 표시됩니다. 아직은 공사 중입니다.</span></span>
+            <span><span className="block font-display">익명 공개</span><span className="text-sm">사건기록실에 닉네임과 캐릭터로 표시되고, 황당했던 순간도 함께 보입니다. 나중에 내 기록에서 비공개로 바꿀 수 있어요.</span></span>
           </label>
         </div>
       </fieldset>

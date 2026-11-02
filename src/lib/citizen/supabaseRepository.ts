@@ -1,9 +1,10 @@
 import { sanitizeCharacter } from "@/lib/character/catalog";
 import { getSupabase } from "@/lib/supabase/client";
+import type { ReactionCounts, ReactionKind } from "@/lib/archive/reactions";
 import type { CategoryId } from "@/lib/complaint/content";
 import { generateCase } from "@/lib/complaint/generate";
 import { isKstMonday } from "@/lib/daily/date";
-import type { CaseRecord, CaseVisibility, Citizen, CitizenRepository } from "./types";
+import type { CaseRecord, CaseVisibility, Citizen, CitizenRepository, PublicCase } from "./types";
 
 type Row = {
   id: string;
@@ -68,6 +69,46 @@ function toCase(row: CaseRow): CaseRecord {
   };
 }
 
+type PublicCaseRow = {
+  id: string;
+  title: string;
+  report: string;
+  verdict: string;
+  disposition: string;
+  awarded_title: string | null;
+  created_at: string;
+  nickname: string;
+  character: unknown;
+  counts: ReactionCounts;
+  mine: ReactionKind[];
+  is_mine: boolean;
+};
+
+function toPublicCase(row: PublicCaseRow): PublicCase {
+  return {
+    id: row.id,
+    title: row.title,
+    report: row.report,
+    verdict: row.verdict,
+    disposition: row.disposition,
+    awardedTitle: row.awarded_title,
+    createdAt: row.created_at,
+    nickname: row.nickname,
+    character: sanitizeCharacter(row.character),
+    counts: row.counts ?? {},
+    mine: row.mine ?? [],
+    isMine: row.is_mine,
+  };
+}
+
+const UNIQUE_VIOLATION = "23505";
+
+async function requireUserId(): Promise<string> {
+  const userId = await currentUserId();
+  if (!userId) throw new Error("시민 등록을 먼저 해 주세요.");
+  return userId;
+}
+
 async function currentUserId(): Promise<string | null> {
   const { data, error } = await getSupabase().auth.getSession();
   if (error) throw new Error("로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.");
@@ -81,6 +122,7 @@ function failure(action: string): Error {
 /** 로그인 없이 체험할 수 있도록 Supabase 익명 로그인을 쓴다. 영구 계정 연결은 같은 user id를 유지한 채 진행한다. */
 export const supabaseRepository: CitizenRepository = {
   mode: "account",
+  socialEnabled: true,
   async load() {
     const userId = await currentUserId();
     if (!userId) return null;
@@ -153,6 +195,38 @@ export const supabaseRepository: CitizenRepository = {
     const citizen = await this.load();
     if (!citizen) throw failure("시민증 갱신");
     return { record: toCase(data as CaseRow), citizen };
+  },
+  async setCaseVisibility(caseId, visibility) {
+    const { error } = await getSupabase().from("cases").update({ visibility }).eq("id", caseId);
+    if (error) throw failure("공개 범위 변경");
+  },
+  async reactionCounts(caseIds) {
+    if (caseIds.length === 0) return {};
+    const { data, error } = await getSupabase().rpc("case_reaction_counts", { p_ids: caseIds });
+    if (error) throw failure("반응 불러오기");
+    const result: Record<string, ReactionCounts> = {};
+    for (const row of data as { case_id: string; kind: ReactionKind; n: number }[]) {
+      result[row.case_id] = { ...result[row.case_id], [row.kind]: Number(row.n) };
+    }
+    return result;
+  },
+  async listPublicCases(sort, offset) {
+    const { data, error } = await getSupabase().rpc("public_cases", { p_sort: sort, p_limit: 20, p_offset: offset });
+    if (error) throw failure("사건 불러오기");
+    return (data as PublicCaseRow[]).map(toPublicCase);
+  },
+  async setReaction(caseId, kind, on) {
+    const userId = await requireUserId();
+    const reactions = getSupabase().from("reactions");
+    const { error } = on
+      ? await reactions.insert({ case_id: caseId, citizen_id: userId, kind })
+      : await reactions.delete().match({ case_id: caseId, citizen_id: userId, kind });
+    if (error && error.code !== UNIQUE_VIOLATION) throw failure("반응 남기기");
+  },
+  async reportCase(caseId, reason) {
+    const userId = await requireUserId();
+    const { error } = await getSupabase().from("reports").insert({ case_id: caseId, reporter_id: userId, reason });
+    if (error && error.code !== UNIQUE_VIOLATION) throw failure("신고");
   },
   async stats() {
     const { data, error } = await getSupabase().rpc("plaza_stats");

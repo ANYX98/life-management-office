@@ -1,4 +1,5 @@
 import type { CharacterConfig } from "@/lib/character/catalog";
+import type { ArchiveSort, ReactionCounts, ReactionKind, ReportReason } from "@/lib/archive/reactions";
 import type { CategoryId } from "@/lib/complaint/content";
 
 export type Citizen = {
@@ -47,7 +48,25 @@ export type CaseRecord = {
   awardedTitle: string | null;
 };
 
+/** 다른 시민에게 보이는 사건. 본인 식별자는 담지 않는다. */
+export type PublicCase = {
+  id: string;
+  title: string;
+  report: string;
+  verdict: string;
+  disposition: string;
+  awardedTitle: string | null;
+  createdAt: string;
+  nickname: string;
+  character: CharacterConfig;
+  counts: ReactionCounts;
+  mine: ReactionKind[];
+  isMine: boolean;
+};
+
 export interface CitizenRepository {
+  /** false면 서버가 없는 게스트 모드라 다른 시민의 사건을 볼 수 없다. */
+  readonly socialEnabled: boolean;
   readonly mode: "guest" | "account";
   load(): Promise<Citizen | null>;
   register(input: { nickname: string; character: CharacterConfig }): Promise<Citizen>;
@@ -55,6 +74,11 @@ export interface CitizenRepository {
   stats(): Promise<PlazaStats | null>;
   listCases(): Promise<CaseRecord[]>;
   submitCase(input: NewCaseInput): Promise<{ record: CaseRecord; citizen: Citizen }>;
+  setCaseVisibility(caseId: string, visibility: CaseVisibility): Promise<void>;
+  reactionCounts(caseIds: string[]): Promise<Record<string, ReactionCounts>>;
+  listPublicCases(sort: ArchiveSort, offset: number): Promise<PublicCase[]>;
+  setReaction(caseId: string, kind: ReactionKind, on: boolean): Promise<void>;
+  reportCase(caseId: string, reason: ReportReason): Promise<void>;
 }
 
 /** supabase/migrations의 random_citizen_type()과 같은 목록을 유지한다. */

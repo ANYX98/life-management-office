@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Character } from "@/components/character/Character";
 import { Mascot, type MascotExpression } from "@/components/mascot/Mascot";
 import { citizenRepository } from "@/lib/citizen/repository";
-import type { Citizen, PlazaStats } from "@/lib/citizen/types";
+import type { Citizen, PlazaStats, PublicCase } from "@/lib/citizen/types";
 import { useCitizen } from "@/lib/citizen/useCitizen";
 import { MASCOT_LINES_CITIZEN, MASCOT_LINES_GUEST, MASCOT_POKE_LINES, NOTICES } from "@/lib/daily/content";
 import { dailyIndex, formatKoreanDate, useToday } from "@/lib/daily/today";
@@ -127,12 +127,39 @@ function Notice({ today }: { today: string | null }) {
 }
 
 function RecordsPreview() {
+  const [cases, setCases] = useState<PublicCase[] | "loading" | "error">("loading");
+  useEffect(() => {
+    let alive = true;
+    citizenRepository
+      .listPublicCases("latest", 0)
+      .then((rows) => alive && setCases(rows.slice(0, 3)))
+      .catch(() => alive && setCases("error"));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <section>
       <h2 className="text-2xl">시민 사건기록실</h2>
-      <div className="paper mt-3 grid gap-2 p-6">
-        <p className="font-display text-lg">아직 공개된 사건이 없습니다.</p>
-        <p>다른 시민의 사건을 구경하는 기록실은 공사 중입니다. 없는 사건을 지어내 진열하지는 않습니다. 첫 사건은 진짜 시민의 것이어야 하니까요.</p>
+      <div className="paper mt-3 grid gap-3 p-6">
+        {cases === "loading" && <div className="skeleton h-24" />}
+        {cases === "error" && <p>기록실 서류를 가져오지 못했습니다. 잠시 후 다시 열어 주세요.</p>}
+        {Array.isArray(cases) && cases.length === 0 && (
+          <p>{citizenRepository.socialEnabled ? "공개된 사건이 아직 없습니다. 없는 사건을 지어내 진열하지는 않습니다. 민원을 낼 때 익명 공개를 고르면 이곳에 올라옵니다." : "서버가 연결되지 않아 다른 시민의 사건을 볼 수 없습니다."}</p>
+        )}
+        {Array.isArray(cases) && cases.map((item) => (
+          <Link key={item.id} href="/archive" className="flex items-center gap-3 border-b-2 border-dashed border-ink/30 pb-2 text-ink no-underline">
+            <span className="size-11 shrink-0 overflow-hidden rounded-full border-[2.5px] border-ink bg-sage">
+              <Character config={item.character} size={40} crop="face" rough={false} title={`${item.nickname} 시민`} />
+            </span>
+            <span className="min-w-0">
+              <span className="block font-display text-lg">{item.title}</span>
+              <span className="block truncate text-sm text-ink-soft">{item.nickname} 시민</span>
+            </span>
+          </Link>
+        ))}
+        <Link href="/archive" className="btn justify-self-start">사건기록실 구경하기</Link>
       </div>
     </section>
   );
@@ -179,7 +206,7 @@ function StatsSheet() {
 /** 아직 만들지 않은 시설은 링크를 걸지 않고 공사 중임을 그대로 보여 준다. */
 const FACILITIES = [
   { name: "공단 사물함", note: "스티커와 아이템 보관", stage: "3단계" },
-  { name: "시민 사건기록실", note: "다른 시민의 사건 구경", stage: "4단계" },
+  { name: "댓글과 공개 프로필", note: "시민끼리 나누는 이야기", stage: "4단계" },
   { name: "공단 통계청", note: "전체 시민 활동 집계", stage: "4단계" },
 ];
 
@@ -187,7 +214,7 @@ function FacilityMap() {
   return (
     <section>
       <h2 className="text-2xl">공단 청사 안내도</h2>
-      <p className="mb-3">지금 이용할 수 있는 곳은 광장, 시민 등록실, 시민증, 증명사진 촬영실, 민원 접수실, 나의 인생 기록실, 민원 3번 창구입니다.</p>
+      <p className="mb-3">지금 이용할 수 있는 곳은 광장, 시민 등록실, 시민증, 증명사진 촬영실, 민원 접수실, 나의 인생 기록실, 민원 3번 창구, 시민 사건기록실입니다.</p>
       <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
         {FACILITIES.map((facility) => (
           <li key={facility.name} className="flex items-center justify-between gap-3 border-b-2 border-dashed border-ink/30 py-2">

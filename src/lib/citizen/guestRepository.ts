@@ -38,6 +38,7 @@ function save(citizen: Citizen): Citizen {
 
 export const guestRepository: CitizenRepository = {
   mode: "guest",
+  socialEnabled: false,
   async load() {
     return read();
   },
@@ -85,6 +86,22 @@ export const guestRepository: CitizenRepository = {
     const caseCount = history.length + 1;
     const citizen = save({ ...current, caseCount, grade: gradeFor(caseCount), title: record.awardedTitle ?? current.title });
     return { record, citizen };
+  },
+  async setCaseVisibility(caseId, visibility) {
+    const next = readCases().map((item) => (item.id === caseId ? { ...item, visibility } : item));
+    if (!writeJson(CASES_KEY, next)) throw new Error("이 브라우저에 저장할 수 없습니다.");
+  },
+  async reactionCounts() {
+    return {};
+  },
+  async listPublicCases() {
+    return [];
+  },
+  async setReaction() {
+    throw new Error("게스트 모드에서는 반응을 남길 수 없습니다.");
+  },
+  async reportCase() {
+    throw new Error("게스트 모드에서는 신고할 수 없습니다.");
   },
   async stats() {
     return null; // 게스트 모드에는 집계할 전체 시민 데이터가 없다.
