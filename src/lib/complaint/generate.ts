@@ -1,4 +1,5 @@
 import type { CaseRecord, NewCaseInput } from "@/lib/citizen/types";
+import { fillWord, GENTLE_RULE, matchStatement } from "./rules";
 import { CATEGORIES, ENERGY_LEVELS, MILESTONE_AT, MILESTONE_TITLE, MONDAY_TITLE, type CategoryId } from "./content";
 
 export type GeneratedCase = Pick<CaseRecord, "title" | "report" | "verdict" | "disposition" | "awardedTitle">;
@@ -35,17 +36,36 @@ export function generateCase(
   const recent = history.slice(0, 3);
   const energy = ENERGY_LEVELS.find((item) => item.value === input.energy) ?? ENERGY_LEVELS[2];
 
+  const statement = input.statement.trim();
+  const match = matchStatement(statement);
+  const recentTitles = recent.map((item) => item.title);
+  const recentVerdicts = recent.map((item) => item.verdict);
+  const recentDispositions = recent.map((item) => item.disposition);
+
+  // 농담하면 안 되는 일: 조사 문구, 에너지 안내, 칭호를 모두 뺀다.
+  if (match?.rule === GENTLE_RULE) {
+    return {
+      title: GENTLE_RULE.titles[0],
+      report: `귀하의 진술: "${statement}"`,
+      verdict: GENTLE_RULE.verdicts[0],
+      disposition: GENTLE_RULE.dispositions[0],
+      awardedTitle: null,
+    };
+  }
+
   const report: string[] = [];
   if (input.uselessAct) report.push(`조사 결과, 귀하는 오늘 '${input.uselessAct}'이라는 행위를 한 것으로 확인되었습니다. 공단은 이를 업무로 인정합니다.`);
   if (input.socialState) report.push(`사회생활 창구 상태는 '${input.socialState}'으로 접수되었습니다.`);
-  if (input.statement.trim()) report.push(`귀하의 진술: "${input.statement.trim()}" 공단은 이 진술을 일단 믿기로 했습니다. 확인하기 귀찮습니다.`);
+  if (statement) report.push(`귀하의 진술: "${statement}" 공단은 이 진술을 일단 믿기로 했습니다. 확인하기 귀찮습니다.`);
   if (report.length === 0) report.push("귀하는 별다른 진술을 하지 않았습니다. 공단도 더 묻지 않았습니다.");
 
+  // 글에서 주제를 찾으면 그 문구를, 못 찾으면 고른 민원 유형의 문구를 쓴다.
+  const source = match?.rule ?? category;
   return {
-    title: pickFresh(category.titles, recent.map((item) => item.title), random),
+    title: pickFresh(source.titles, recentTitles, random),
     report: report.join(" "),
-    verdict: pickFresh(category.verdicts, recent.map((item) => item.verdict), random),
-    disposition: `${pickFresh(category.dispositions, recent.map((item) => item.disposition), random)} ${energy.note}`,
+    verdict: fillWord(pickFresh(source.verdicts, recentVerdicts, random), match?.word ?? null),
+    disposition: `${fillWord(pickFresh(source.dispositions, recentDispositions, random), match?.word ?? null)} ${energy.note}`,
     awardedTitle: chooseAwardedTitle(input.category, history, options.isMonday),
   };
 }

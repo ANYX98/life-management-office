@@ -10,6 +10,7 @@ import type { CaseRecord, CaseVisibility, Citizen } from "@/lib/citizen/types";
 import { notifyCitizenChanged, useCitizen } from "@/lib/citizen/useCitizen";
 import { CATEGORIES, ENERGY_LEVELS, SOCIAL_STATES, STATEMENT_PROMPTS, USELESS_ACTS, type CategoryId } from "@/lib/complaint/content";
 import { dailyIndex, useToday } from "@/lib/daily/today";
+import { matchStatement } from "@/lib/complaint/rules";
 import { looksLikeSeriousDistress, validateStatement } from "@/lib/complaint/generate";
 import { CaseSheet } from "./CaseSheet";
 
@@ -59,7 +60,7 @@ export function ComplaintScreen() {
   if (result) return <ResultView result={result} onAgain={reset} />;
 
   const submit = async () => {
-    const resolvedCategory: CategoryId | null = category ?? (statement.trim() ? "free" : null);
+    const resolvedCategory: CategoryId | null = category ?? (statement.trim() ? (matchStatement(statement)?.rule.category ?? "free") : null);
     if (!resolvedCategory) {
       setProblem("진술을 적거나 민원 유형을 하나만 골라 주십시오. 나머지는 대충 넘겨도 됩니다.");
       return;
