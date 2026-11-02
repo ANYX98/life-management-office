@@ -23,7 +23,7 @@ export function CaseBody({ report, verdict, disposition }: { report: string; ver
         <blockquote className="m-0 -rotate-[0.4deg] rounded-md border-2 border-dashed border-ink/40 bg-manila/50 px-4 py-3">
           <p className="text-sm text-ink-soft">귀하의 진술</p>
           <p className="font-hand text-[21px] leading-snug font-bold whitespace-pre-line">{statement}</p>
-          {believed && <p className="mt-1 text-right text-xs text-ink-soft">공단은 일단 믿기로 했습니다. 확인하기 귀찮습니다.</p>}
+          {believed && <p className="mt-1 text-right text-xs text-ink-soft">일단 믿겠습니다.</p>}
         </blockquote>
       )}
       <div>

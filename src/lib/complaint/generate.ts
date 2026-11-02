@@ -54,13 +54,13 @@ export function generateCase(
   }
 
   const report: string[] = [];
-  if (input.uselessAct) report.push(`조사 결과, 귀하는 오늘 '${input.uselessAct}'이라는 행위를 한 것으로 확인되었습니다. 공단은 이를 업무로 인정합니다.`);
+  if (input.uselessAct) report.push(`조사 결과, 귀하는 오늘 '${input.uselessAct}'이라는 행위를 한 것으로 확인되었습니다. 네.`);
   if (input.socialState) report.push(`사회생활 창구 상태는 '${input.socialState}'으로 접수되었습니다.`);
   if (statement) report.push(`귀하의 진술: "${statement}" 공단은 이 진술을 일단 믿기로 했습니다. 확인하기 귀찮습니다.`);
   if (report.length === 0) report.push("귀하는 별다른 진술을 하지 않았습니다. 공단도 더 묻지 않았습니다.");
 
-  // 글에서 주제를 찾으면 그 문구를, 못 찾으면 고른 민원 유형의 문구를 쓴다.
-  const source = match?.rule ?? category;
+  // 글에서 주제를 찾으면 그 문구를, 글은 있는데 못 찾으면 어떤 글에도 맞는 받아넘기기를 쓴다.
+  const source = match?.rule ?? (statement ? CATEGORIES.find((item) => item.id === "free")! : category);
   return {
     title: pickFresh(source.titles, recentTitles, random),
     report: report.join(" "),
