@@ -1,11 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Character } from "@/components/character/Character";
 import { Mascot } from "@/components/mascot/Mascot";
 import { ErrorNote, LoadingNote } from "@/components/ui/StateNotes";
+import { Turnstile, TURNSTILE_SITE_KEY } from "@/components/ui/Turnstile";
 import { CitizenCard } from "@/features/card/CitizenCard";
 import { CharacterEditor } from "@/features/editor/CharacterEditor";
 import { DEFAULT_CHARACTER, type CharacterConfig } from "@/lib/character/catalog";
@@ -23,6 +25,8 @@ export function RegisterFlow() {
   const [nickname, setNickname] = useState("");
   const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [character, setCharacter] = useState<CharacterConfig>(DEFAULT_CHARACTER);
+  const [agreed, setAgreed] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [issued, setIssued] = useState<Citizen | null>(null);
   const [issuing, setIssuing] = useState(false);
   const [issueError, setIssueError] = useState<string | null>(null);
@@ -36,8 +40,9 @@ export function RegisterFlow() {
   if (state.status === "loading" || alreadyRegistered) return <LoadingNote label="등록부를 확인하는 중입니다" />;
   if (state.status === "error") return <ErrorNote message={state.message} onRetry={reload} />;
 
+  // 이미 시민인 경우 등록 화면으로 돌아오지 않게 위에서 처리한다.
   const submitNickname = () => {
-    const problem = validateNickname(nickname);
+    const problem = validateNickname(nickname) ?? (agreed ? null : "안내문을 확인하고 체크해 주세요.");
     setNicknameError(problem);
     if (!problem) setStep(1);
   };
@@ -46,7 +51,7 @@ export function RegisterFlow() {
     setIssuing(true);
     setIssueError(null);
     try {
-      setIssued(await citizenRepository.register({ nickname, character }));
+      setIssued(await citizenRepository.register({ nickname, character, captchaToken }));
       setStep(3);
       notifyCitizenChanged();
     } catch (cause) {
@@ -82,7 +87,7 @@ export function RegisterFlow() {
               <div className="flex items-end gap-2">
                 <Mascot size={92} expression="deadpan" pose="document" />
                 <p className="bubble flex-1 text-[17px]" style={{ ["--tail-x" as string]: "-4px" }}>
-                  공단에서 부를 이름을 적어 주세요. 실명은 받지 않습니다. 저희도 책임지기 싫습니다.
+                  공단에서 부를 이름을 적어 주세요. 실명은 받지 않습니다.
                 </p>
               </div>
               <h1 className="mt-2 text-2xl">시민 등록 신청서</h1>
@@ -104,6 +109,10 @@ export function RegisterFlow() {
                 />
                 {nicknameError && <p id="nickname-error" role="alert" className="mt-1 text-sm font-bold text-brick">{nicknameError}</p>}
               </div>
+              <label className="flex items-start gap-2 text-sm">
+                <input id="agree" type="checkbox" className="mt-1.5" checked={agreed} onChange={(event) => { setAgreed(event.target.checked); setNicknameError(null); }} />
+                <span>만 14세 이상이며, <Link href="/privacy" target="_blank" className="text-brick">개인정보 안내</Link>를 확인했습니다.</span>
+              </label>
               <button type="submit" className="btn btn-primary">다음: 캐릭터 만들기</button>
             </form>
           )}
@@ -124,10 +133,11 @@ export function RegisterFlow() {
               </div>
               <p className="font-display text-xl">{nickname.trim()}</p>
               <p className="font-hand text-lg font-bold">감자 과장님: “{remark}”</p>
+              <Turnstile onToken={setCaptchaToken} />
               {issueError && <p role="alert" className="font-bold text-brick">{issueError}</p>}
               <div className="flex flex-wrap justify-center gap-3">
                 <button type="button" className="btn" disabled={issuing} onClick={() => setStep(1)}>다시 꾸미기</button>
-                <button type="button" className="btn btn-primary" disabled={issuing} onClick={issue}>
+                <button type="button" className="btn btn-primary" disabled={issuing || (Boolean(TURNSTILE_SITE_KEY) && citizenRepository.socialEnabled && !captchaToken)} onClick={issue}>
                   {issuing ? "도장 찾는 중…" : "시민증 발급받기"}
                 </button>
               </div>

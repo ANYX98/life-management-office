@@ -1,5 +1,5 @@
 import { sanitizeCharacter } from "@/lib/character/catalog";
-import { readJson, writeJson } from "@/lib/storage";
+import { readJson, removeKey, writeJson } from "@/lib/storage";
 import { CITIZEN_TYPES, INITIAL_GRADE, INITIAL_TITLE, type CaseRecord, type Citizen, type CitizenRepository } from "./types";
 import { generateCase, gradeFor } from "@/lib/complaint/generate";
 import { isKstMonday } from "@/lib/daily/date";
@@ -102,6 +102,19 @@ export const guestRepository: CitizenRepository = {
   },
   async reportCase() {
     throw new Error("게스트 모드에서는 신고할 수 없습니다.");
+  },
+  async linkedEmail() {
+    return null;
+  },
+  async linkEmail() {
+    throw new Error("서버가 연결되지 않아 이메일을 연결할 수 없습니다.");
+  },
+  async sendLoginLink() {
+    throw new Error("서버가 연결되지 않아 로그인 링크를 보낼 수 없습니다.");
+  },
+  async deleteMyAccount() {
+    removeKey(KEY);
+    removeKey(CASES_KEY);
   },
   async stats() {
     return null; // 게스트 모드에는 집계할 전체 시민 데이터가 없다.

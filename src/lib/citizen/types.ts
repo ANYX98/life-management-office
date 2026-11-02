@@ -69,7 +69,7 @@ export interface CitizenRepository {
   readonly socialEnabled: boolean;
   readonly mode: "guest" | "account";
   load(): Promise<Citizen | null>;
-  register(input: { nickname: string; character: CharacterConfig }): Promise<Citizen>;
+  register(input: { nickname: string; character: CharacterConfig; captchaToken?: string | null }): Promise<Citizen>;
   updateCharacter(character: CharacterConfig): Promise<Citizen>;
   stats(): Promise<PlazaStats | null>;
   listCases(): Promise<CaseRecord[]>;
@@ -79,6 +79,13 @@ export interface CitizenRepository {
   listPublicCases(sort: ArchiveSort, offset: number): Promise<PublicCase[]>;
   setReaction(caseId: string, kind: ReactionKind, on: boolean): Promise<void>;
   reportCase(caseId: string, reason: ReportReason): Promise<void>;
+  /** 이 시민증에 연결된 이메일. 본인 화면에만 보여 준다. 없으면 null */
+  linkedEmail(): Promise<string | null>;
+  /** 지금 시민증에 이메일을 연결한다. 메일의 확인 링크를 눌러야 완료된다. */
+  linkEmail(email: string): Promise<void>;
+  /** 다른 기기에서 내 시민증을 찾는 로그인 링크를 보낸다. */
+  sendLoginLink(email: string, captchaToken?: string | null): Promise<void>;
+  deleteMyAccount(): Promise<void>;
 }
 
 /** supabase/migrations의 random_citizen_type()과 같은 목록을 유지한다. */

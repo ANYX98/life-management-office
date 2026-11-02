@@ -115,6 +115,13 @@ async function currentUserId(): Promise<string | null> {
   return data.session?.user.id ?? null;
 }
 
+function mailError(message: string, action: string): string {
+  if (/rate limit/i.test(message)) return "메일 발송 한도를 넘었습니다. 한 시간쯤 뒤 다시 시도해 주세요.";
+  if (/already/i.test(message)) return "이미 다른 시민증에 연결된 이메일입니다. 다른 기기에서 내 시민증 찾기를 이용해 주세요.";
+  if (/signups not allowed|not found/i.test(message)) return "이 이메일로 연결된 시민증이 없습니다. 주소를 확인해 주세요.";
+  return `${action}에 실패했습니다. 이메일 주소를 확인하고 다시 시도해 주세요.`;
+}
+
 function failure(action: string): Error {
   return new Error(`${action}에 실패했습니다. 잠시 후 다시 시도해 주세요.`);
 }
@@ -130,11 +137,11 @@ export const supabaseRepository: CitizenRepository = {
     if (error) throw failure("시민 정보 불러오기");
     return data ? toCitizen(data as Row) : null;
   },
-  async register({ nickname, character }) {
+  async register({ nickname, character, captchaToken }) {
     const supabase = getSupabase();
     let userId = await currentUserId();
     if (!userId) {
-      const { data, error } = await supabase.auth.signInAnonymously();
+      const { data, error } = await supabase.auth.signInAnonymously(captchaToken ? { options: { captchaToken } } : undefined);
       if (error || !data.user) throw failure("임시 시민 계정 만들기");
       userId = data.user.id;
     }
@@ -227,6 +234,28 @@ export const supabaseRepository: CitizenRepository = {
     const userId = await requireUserId();
     const { error } = await getSupabase().from("reports").insert({ case_id: caseId, reporter_id: userId, reason });
     if (error && error.code !== UNIQUE_VIOLATION) throw failure("신고");
+  },
+  async linkedEmail() {
+    const { data } = await getSupabase().auth.getSession();
+    return data.session?.user.email ?? null;
+  },
+  async linkEmail(email) {
+    await requireUserId();
+    const { error } = await getSupabase().auth.updateUser({ email: email.trim() }, { emailRedirectTo: `${window.location.origin}/account` });
+    if (error) throw new Error(mailError(error.message, "이메일 연결"));
+  },
+  async sendLoginLink(email, captchaToken) {
+    const { error } = await getSupabase().auth.signInWithOtp({
+      email: email.trim(),
+      options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/account`, ...(captchaToken ? { captchaToken } : {}) },
+    });
+    if (error) throw new Error(mailError(error.message, "로그인 링크 보내기"));
+  },
+  async deleteMyAccount() {
+    const supabase = getSupabase();
+    const { error } = await supabase.rpc("delete_my_account");
+    if (error) throw failure("삭제");
+    await supabase.auth.signOut({ scope: "local" });
   },
   async stats() {
     const { data, error } = await getSupabase().rpc("plaza_stats");
