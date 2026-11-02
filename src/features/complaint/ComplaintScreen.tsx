@@ -10,7 +10,7 @@ import type { CaseRecord, CaseVisibility, Citizen } from "@/lib/citizen/types";
 import { notifyCitizenChanged, useCitizen } from "@/lib/citizen/useCitizen";
 import { CATEGORIES, ENERGY_LEVELS, SOCIAL_STATES, STATEMENT_PROMPTS, USELESS_ACTS, type CategoryId } from "@/lib/complaint/content";
 import { dailyIndex, useToday } from "@/lib/daily/today";
-import { matchStatement } from "@/lib/complaint/rules";
+import { GENTLE_RULE, matchStatement } from "@/lib/complaint/rules";
 import { looksLikeSeriousDistress, validateStatement } from "@/lib/complaint/generate";
 import { CaseSheet } from "./CaseSheet";
 
@@ -182,17 +182,18 @@ function ChipGroup({
 
 function ResultView({ result, onAgain }: { result: { record: CaseRecord; citizen: Citizen; previousCount: number }; onAgain: () => void }) {
   const { record, citizen, previousCount } = result;
+  const gentle = record.title === GENTLE_RULE.titles[0];
   return (
     <div className="mx-auto grid max-w-2xl gap-5 pt-2">
       <div className="flex items-end justify-center gap-1">
         <Character config={citizen.character} size={130} title={`${citizen.nickname} 시민 캐릭터`} />
-        <Mascot size={118} expression="deadpan" pose="stamp" />
+        <Mascot size={118} expression={gentle ? "worried" : "deadpan"} pose={gentle ? "stand" : "stamp"} />
       </div>
       <CaseSheet record={record} fresh />
-      <div className="paper p-4">
+      {!gentle && <div className="paper p-4">
         <h2 className="text-lg">시민증이 갱신되었습니다</h2>
         <p>누적 사건 {previousCount}건에서 {citizen.caseCount}건으로, 등급은 {citizen.grade}, 대표 칭호는 {citizen.title}입니다.</p>
-      </div>
+      </div>}
       <div className="flex flex-wrap justify-center gap-3">
         <Link href="/records" className="btn btn-primary">내 기록 보기</Link>
         <Link href="/card" className="btn">시민증 보기</Link>
