@@ -22,8 +22,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
         {state.status === "none" && (
           <div className="flex items-center gap-2">
-            <Link href="/account" className="btn px-3">로그인</Link>
-            <Link href="/register" className="btn btn-primary px-3">시민 등록</Link>
+            <Link href="/account" className="btn min-h-10 px-2.5 text-[15px] whitespace-nowrap">로그인</Link>
+            <Link href="/register" className="btn btn-primary min-h-10 px-2.5 text-[15px] whitespace-nowrap">시민 등록</Link>
           </div>
         )}
       </header>

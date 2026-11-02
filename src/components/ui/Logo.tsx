@@ -8,7 +8,7 @@ export function Logo() {
       </span>
       <span className="leading-tight">
         <span className="block font-display text-xl">인생관리공단</span>
-        <span className="block font-official text-[10px] tracking-wide text-ink-soft">LIFE MANAGEMENT OFFICE</span>
+        <span className="hidden font-official text-[10px] tracking-wide text-ink-soft sm:block">LIFE MANAGEMENT OFFICE</span>
       </span>
     </Link>
   );

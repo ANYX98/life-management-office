@@ -74,6 +74,7 @@ function CounterHero({ citizen, isLoading }: { citizen: Citizen | null; isLoadin
 
       <aside className="flex flex-col justify-center gap-5">
         {isLoading ? <div className="skeleton h-52" /> : citizen ? <CitizenSlip citizen={citizen} /> : <RegisterTicket />}
+        {!isLoading && !citizen && <Link href="/account" className="btn">이미 시민증이 있어요 (로그인)</Link>}
         <Link href="/counter" className="btn">감자 과장님 창구에 앉기</Link>
       </aside>
     </section>

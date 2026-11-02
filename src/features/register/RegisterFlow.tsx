@@ -123,6 +123,7 @@ export function RegisterFlow() {
                 <span>만 14세 이상이며, 위 내용과 <Link href="/privacy" target="_blank" className="text-brick">개인정보 안내</Link>에 동의합니다.</span>
               </label>
               <button type="submit" className="btn btn-primary">다음: 캐릭터 만들기</button>
+              <p className="text-center text-sm">이미 시민증이 있나요? <Link href="/account" className="text-brick">로그인</Link></p>
             </form>
           )}
 

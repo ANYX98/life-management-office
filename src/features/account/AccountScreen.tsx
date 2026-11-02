@@ -32,7 +32,7 @@ export function AccountScreen() {
 
   return (
     <div className="mx-auto grid max-w-lg gap-6 pt-2">
-      <h1 className="text-[28px]">계정과 내 정보</h1>
+      <h1 className="text-[28px]">{state.status === "none" ? "로그인" : "계정과 내 정보"}</h1>
       {!citizenRepository.socialEnabled && <div className="paper p-5">서버가 연결되지 않아 이 브라우저에만 저장됩니다. 계정 연결은 쓸 수 없습니다.</div>}
 
       {citizenRepository.socialEnabled && state.status === "ready" && (
@@ -55,8 +55,8 @@ export function AccountScreen() {
 
       {citizenRepository.socialEnabled && (state.status === "none" || (state.status === "ready" && !linked)) && (
         <EmailForm
-          title={state.status === "none" ? "내 시민증 찾기" : "다른 시민증 찾기"}
-          description={state.status === "none" ? "전에 이메일을 연결했다면 로그인 링크를 보내 드립니다." : "다른 기기에서 쓰던 시민증이 있다면 찾을 수 있습니다. 다만 지금 이 기기의 시민증은 이메일을 연결하지 않으면 다시 찾을 수 없습니다."}
+          title={state.status === "none" ? "이메일로 내 시민증 찾기" : "다른 시민증으로 로그인"}
+          description={state.status === "none" ? "시민증에 연결한 이메일을 적어 주세요. 비밀번호 없이, 메일로 온 링크를 누르면 로그인됩니다. 링크는 이 브라우저에서 여세요." : "다른 기기에서 쓰던 시민증이 있다면 로그인할 수 있습니다. 다만 지금 이 기기의 시민증은 이메일을 연결하지 않으면 다시 찾을 수 없습니다."}
           action="로그인 링크 보내기"
           done="이메일을 연결한 시민증이 있으면 로그인 링크가 갑니다. 메일함을 확인해 주세요."
           withCaptcha
