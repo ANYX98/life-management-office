@@ -112,6 +112,12 @@ export const guestRepository: CitizenRepository = {
   async sendLoginLink() {
     throw new Error("서버가 연결되지 않아 로그인 링크를 보낼 수 없습니다.");
   },
+  async setPassword() {
+    throw new Error("서버가 연결되지 않아 비밀번호를 설정할 수 없습니다.");
+  },
+  async loginWithPassword() {
+    throw new Error("서버가 연결되지 않아 로그인할 수 없습니다.");
+  },
   async deleteMyAccount() {
     removeKey(KEY);
     removeKey(CASES_KEY);

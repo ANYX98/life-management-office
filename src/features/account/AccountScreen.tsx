@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ErrorNote, LoadingNote } from "@/components/ui/StateNotes";
 import { Turnstile, TURNSTILE_SITE_KEY } from "@/components/ui/Turnstile";
@@ -40,28 +41,22 @@ export function AccountScreen() {
           <section className="paper p-5">
             <h2 className="text-xl">이메일 연결됨</h2>
             <p className="mt-1">{linked}</p>
-            <p className="mt-1 text-sm text-ink-soft">다른 시민에게는 보이지 않습니다. 다른 기기에서는 아래 주소로 시민증을 찾을 수 있습니다.</p>
+            <p className="mt-1 text-sm text-ink-soft">다른 시민에게는 보이지 않습니다.</p>
+            <PasswordForm />
           </section>
         ) : (
           <EmailForm
             title="이메일 연결하기"
             description="연결해 두면 브라우저 기록을 지워도, 기기를 바꿔도 이 시민증을 찾을 수 있습니다. 이메일은 다른 시민에게 보이지 않습니다."
             action="확인 메일 보내기"
-            done="확인 메일을 보냈습니다. 메일의 링크를 누르면 연결이 끝납니다. 메일함에 없으면 스팸함도 봐 주세요."
+            done="확인 메일을 보냈습니다. 링크를 누르고 돌아오면 비밀번호를 정할 수 있습니다. 메일함에 없으면 스팸함도 봐 주세요."
             submit={(email) => citizenRepository.linkEmail(email)}
           />
         )
       )}
 
       {citizenRepository.socialEnabled && (state.status === "none" || (state.status === "ready" && !linked)) && (
-        <EmailForm
-          title={state.status === "none" ? "이메일로 내 시민증 찾기" : "다른 시민증으로 로그인"}
-          description={state.status === "none" ? "시민증에 연결한 이메일을 적어 주세요. 비밀번호 없이, 메일로 온 링크를 누르면 로그인됩니다. 링크는 이 브라우저에서 여세요." : "다른 기기에서 쓰던 시민증이 있다면 로그인할 수 있습니다. 다만 지금 이 기기의 시민증은 이메일을 연결하지 않으면 다시 찾을 수 없습니다."}
-          action="로그인 링크 보내기"
-          done="이메일을 연결한 시민증이 있으면 로그인 링크가 갑니다. 메일함을 확인해 주세요."
-          withCaptcha
-          submit={(email, token) => citizenRepository.sendLoginLink(email, token)}
-        />
+        <LoginSection hasLocalCitizen={state.status === "ready"} />
       )}
 
       {state.status === "none" && (
@@ -72,6 +67,107 @@ export function AccountScreen() {
 
       <p className="text-center text-sm"><Link href="/privacy" className="text-ink-soft">개인정보 안내 보기</Link></p>
     </div>
+  );
+}
+
+function LoginSection({ hasLocalCitizen }: { hasLocalCitizen: boolean }) {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const [problem, setProblem] = useState<string | null>(null);
+  const [working, setWorking] = useState(false);
+  const [useLink, setUseLink] = useState(false);
+
+  const login = async () => {
+    if (!EMAIL.test(email.trim()) || !password) {
+      setProblem("이메일과 비밀번호를 적어 주세요.");
+      return;
+    }
+    setProblem(null);
+    setWorking(true);
+    try {
+      await citizenRepository.loginWithPassword(email, password, token);
+      notifyCitizenChanged();
+      router.push("/");
+    } catch (cause) {
+      setProblem(cause instanceof Error ? cause.message : "로그인하지 못했습니다.");
+      setWorking(false);
+    }
+  };
+
+  return (
+    <>
+      <section className="paper grid gap-3 p-5">
+        <h2 className="text-xl">{hasLocalCitizen ? "다른 시민증으로 로그인" : "이메일로 로그인"}</h2>
+        {hasLocalCitizen && <p className="text-sm">지금 이 기기의 시민증은 이메일을 연결하지 않으면 다시 찾을 수 없습니다.</p>}
+        <form noValidate className="grid gap-3" onSubmit={(event) => { event.preventDefault(); void login(); }}>
+          <label htmlFor="login-email" className="text-sm">이메일</label>
+          <input id="login-email" type="email" autoComplete="username" className="field" value={email} onChange={(event) => setEmail(event.target.value)} />
+          <label htmlFor="login-password" className="text-sm">비밀번호</label>
+          <input id="login-password" type="password" autoComplete="current-password" className="field" value={password} onChange={(event) => setPassword(event.target.value)} />
+          <Turnstile onToken={setToken} />
+          {problem && <p role="alert" className="text-sm font-bold text-brick">{problem}</p>}
+          <button type="submit" className="btn btn-primary" disabled={working || (Boolean(TURNSTILE_SITE_KEY) && !token)}>{working ? "확인 중…" : "로그인"}</button>
+        </form>
+        <button type="button" className="cursor-pointer justify-self-center border-0 bg-transparent p-1 text-sm text-ink-soft underline" onClick={() => setUseLink(!useLink)}>
+          비밀번호를 잊었거나 정한 적이 없어요
+        </button>
+      </section>
+      {useLink && (
+        <EmailForm
+          title="메일 링크로 들어가기"
+          description="연결한 이메일로 링크를 보내 드립니다. 링크로 들어온 뒤 이 화면에서 새 비밀번호를 정하면 됩니다."
+          action="로그인 링크 보내기"
+          done="이메일을 연결한 시민증이 있으면 로그인 링크가 갑니다. 메일함을 확인해 주세요."
+          withCaptcha
+          submit={(value, captcha) => citizenRepository.sendLoginLink(value, captcha)}
+        />
+      )}
+    </>
+  );
+}
+
+function PasswordForm() {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [problem, setProblem] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
+
+  const save = async () => {
+    if (password.length < 8) {
+      setProblem("비밀번호는 8자 이상으로 적어 주세요.");
+      return;
+    }
+    if (password !== confirm) {
+      setProblem("두 비밀번호가 다릅니다.");
+      return;
+    }
+    setProblem(null);
+    setStatus("saving");
+    try {
+      await citizenRepository.setPassword(password);
+      setPassword("");
+      setConfirm("");
+      setStatus("saved");
+    } catch (cause) {
+      setProblem(cause instanceof Error ? cause.message : "저장하지 못했습니다.");
+      setStatus("idle");
+    }
+  };
+
+  return (
+    <form noValidate className="mt-4 grid gap-3 border-t-2 border-dashed border-ink/25 pt-4" onSubmit={(event) => { event.preventDefault(); void save(); }}>
+      <h3 className="text-lg">비밀번호 정하기</h3>
+      <p className="text-sm">정해 두면 다음부터 이메일과 비밀번호로 바로 로그인합니다. 다른 사이트와 다른 비밀번호를 쓰세요.</p>
+      <label htmlFor="new-password" className="text-sm">새 비밀번호 (8자 이상)</label>
+      <input id="new-password" type="password" autoComplete="new-password" className="field" value={password} onChange={(event) => { setPassword(event.target.value); setStatus("idle"); }} />
+      <label htmlFor="confirm-password" className="text-sm">한 번 더</label>
+      <input id="confirm-password" type="password" autoComplete="new-password" className="field" value={confirm} onChange={(event) => setConfirm(event.target.value)} />
+      {problem && <p role="alert" className="text-sm font-bold text-brick">{problem}</p>}
+      {status === "saved" && <p role="status" className="font-display">비밀번호를 저장했습니다.</p>}
+      <button type="submit" className="btn btn-primary" disabled={status === "saving"}>{status === "saving" ? "저장 중…" : "비밀번호 저장"}</button>
+    </form>
   );
 }
 

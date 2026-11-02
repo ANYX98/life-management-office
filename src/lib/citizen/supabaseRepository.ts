@@ -251,6 +251,27 @@ export const supabaseRepository: CitizenRepository = {
     });
     if (error) throw new Error(mailError(error.message, "로그인 링크 보내기"));
   },
+  async setPassword(password) {
+    await requireUserId();
+    const { error } = await getSupabase().auth.updateUser({ password });
+    if (error) {
+      if (/different/i.test(error.message)) throw new Error("지금 쓰는 비밀번호와 다른 비밀번호를 적어 주세요.");
+      if (/weak|at least|characters/i.test(error.message)) throw new Error("더 길고 어려운 비밀번호를 적어 주세요.");
+      throw failure("비밀번호 저장");
+    }
+  },
+  async loginWithPassword(email, password, captchaToken) {
+    const { error } = await getSupabase().auth.signInWithPassword({
+      email: email.trim(),
+      password,
+      ...(captchaToken ? { options: { captchaToken } } : {}),
+    });
+    if (error) {
+      if (/invalid/i.test(error.message)) throw new Error("이메일이나 비밀번호가 맞지 않습니다. 비밀번호를 정한 적이 없다면 아래 메일 링크로 들어가 먼저 정해 주세요.");
+      if (/rate limit|too many/i.test(error.message)) throw new Error("시도가 너무 많았습니다. 잠시 후 다시 해 주세요.");
+      throw failure("로그인");
+    }
+  },
   async deleteMyAccount() {
     const supabase = getSupabase();
     const { error } = await supabase.rpc("delete_my_account");

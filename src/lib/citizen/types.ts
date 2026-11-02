@@ -85,6 +85,9 @@ export interface CitizenRepository {
   linkEmail(email: string): Promise<void>;
   /** 다른 기기에서 내 시민증을 찾는 로그인 링크를 보낸다. */
   sendLoginLink(email: string, captchaToken?: string | null): Promise<void>;
+  /** 이메일이 연결된 뒤 비밀번호를 정하거나 바꾼다. */
+  setPassword(password: string): Promise<void>;
+  loginWithPassword(email: string, password: string, captchaToken?: string | null): Promise<void>;
   deleteMyAccount(): Promise<void>;
 }
 
